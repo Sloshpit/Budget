@@ -1,0 +1,35 @@
+{% extends 'base.html' %}
+{% block content %}
+<div class="container">
+      <div class="row justify-content-center">
+        <div class="col-8">
+          <h1 class="mt-2">Category List</h1>
+<p> Here are some categories that have been defined</p>
+
+
+
+<table class="table table-striped table-bordered">
+<thead>
+<tr>
+<th scope="col">Mster Category</th>
+<th scope="col">Category</th>
+</thead>
+<tbody>
+{% if show_categories %}
+    {% for category in show_categories %}
+        <tr>
+        <td>{{ category.master_category }}</td>
+        <td>{{ category.category}}</td>
+     
+    {% endfor %}
+{% else %}
+    Nothing available
+{% endif %}
+</tbody>
+</table>
+
+</div>
+</div>
+</div>
+
+{% endblock %}

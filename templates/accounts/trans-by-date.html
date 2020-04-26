@@ -1,0 +1,49 @@
+{% extends 'base.html' %}
+
+{% load crispy_forms_tags %}
+
+{% block content %}
+<div class="container">
+      <div class="row justify-content-center">
+        <div class="col-8">
+          <h1 class="mt-2">Get Transactions by Date</h1>
+  <form method="post">
+    {% csrf_token %}
+    {{ form|crispy }}
+    <button type="submit" class="btn btn-primary">Get Transactions</button>
+  </form>
+<div class="mt-3"></div>
+
+<tbody>
+{% if trans_for_account_id %}
+<table class="table table-dark table-bordered">
+<thead>
+<tr>
+<th scope="col">Store</th>
+<th scope="col">Amount</th>
+<th scope="col">Description</th>
+<th scope="col">Transaction Date</th>
+<th scope="col">Category</th>
+<th scop="col">Account</th>
+
+</thead>
+    {% for transaction in trans_for_account_id %}
+        <tr>
+        <td>{{ transaction.store }}</td>
+        <td>${{ transaction.amount | floatformat:2 }}</td>
+        <td>{{ transaction.description }}</td>
+        <td>{{ transaction.trans_date }}</td>
+        <td>{{ transaction.category }}</td>
+        <td>{{ transaction.account_name }}</td>
+       </tr>
+
+    {% endfor %}
+           </tbody>
+   </table>
+{% else %}
+    Choose a date range to see transactions
+{% endif %}
+  </div>
+  </div>
+  </div>
+{% endblock %}
