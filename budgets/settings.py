@@ -33,7 +33,8 @@ ALLOWED_HOSTS = []
 INSTALLED_APPS = [
     'transactions.apps.TransactionsConfig',
     'accounts.apps.AccountsConfig',
-    'categories.apps.CategoriesConfig',    
+    'categories.apps.CategoriesConfig',   
+    'budgettracker.apps.BudgettrackerConfig',
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
