@@ -18,3 +18,14 @@ def index(request):
         'total': total,
     }
     return HttpResponse(template.render(context, request))
+
+class TransactionCreate (CreateView):
+    model = Transaction
+    fields = ['store', 'description', 'amount','trans_date', 'category', 'account_name' ]
+
+class TransactionUpdate (UpdateView):
+    model = Transaction
+    fields = ['store', 'description', 'amount','trans_date', 'category', 'account_name']
+class TransactionDelete (UpdateView):
+    model = Transaction
+    success_url = reverse_lazy('transaction-list')
