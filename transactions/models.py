@@ -1,4 +1,5 @@
 from django.db import models
+from django.forms import ModelForm
 from categories.models import Category
 from accounts.models import Account
 
@@ -11,8 +12,10 @@ class Transaction(models.Model):
     category = models.ForeignKey(Category, on_delete=models.CASCADE)
     account_name = models.ForeignKey(Account, on_delete=models.CASCADE)
 
-    def get_absolute_url(self):
-        return reverse('transactions-detail', kwargs={'pk': self.pk})
 
+
+    def get_absolute_url(self):
+        return reverse('transactions-index', args=[self.id])
+    
     def __str__(self):
         return '%s  %s  %s %s %s %s' %(self.store, self.description, self.amount, self.trans_date, self.category, self.account_name)

@@ -1,6 +1,6 @@
 {% extends 'base.html' %}
 {% block content %}
-<div class="container">
+<div class="container-fluid">
       <div class="row justify-content-center">
         <div class="col-8">
           <h1 class="mt-2">Transactions</h1>
@@ -9,23 +9,25 @@
 <thead>
 <tr>
 <th scope="col">Store</th>
+<th scope="col">Category</th>
 <th scope="col">Description</th>
 <th scope="col">Amount</th>
 <th scope="col">Transaction Date</th>
-<th scope="col">Category</th>
-<th scope="col">Account</th>
 
+<th scope="col">Account</th>
+<th scope="col">Mange</th>
 </thead>
 <tbody>
 {% if show_transactions %}
     {% for transaction in show_transactions %}
         <tr>
         <td>{{ transaction.store }}</td>
+        <td>{{ transaction.category }}</td>
         <td>{{ transaction.description }}</td>
         <td>${{ transaction.amount | floatformat:2 }}</td>
         <td>{{ transaction.trans_date }}</td>
-        <td>{{ transaction.category }}</td>
         <td>{{ transaction.account_name }}</td>
+        <td> <a class = "btn btn-danger" href="{%url "transaction-delete" transaction.id%}">Delete</a> <a class = "btn btn-warning" href="{%url "transaction-update" transaction.id%}">Update</a></td>
        </tr>
     {% endfor %}
 {% else %}
