@@ -18,6 +18,7 @@ from django.urls import path, include
 
 urlpatterns = [
     path('transactions/', include('transactions.urls')),
+     path('transfers/', include('transfers.urls')),
     path('accounts/', include('accounts.urls')),
     path('categories/', include('categories.urls')),    
     path('budgettracker/', include('budgettracker.urls')),    

@@ -7,12 +7,17 @@
       <div class="row justify-content-center">
         <div class="col-8">
           <h1 class="mt-2">Budget Plan for {{ budget_month_date }}</h1>
+          <div class="mt-2"></div>
+          <p>What monthly budget do you need?</p>
+          <div class="mt-2"></div>
   <form method="post">
     {% csrf_token %}
     {{ form|crispy }}
-    <button type="submit" class="btn btn-primary">Get Transactions</button>
+    <div class="mt-2"></div>
+    <button type="submit" class="btn btn-primary">Show plan</button>
   </form>
-
+ <div class="mt-2"></div>
+ {% if budgets_for_selected_month %}
 <table class="table table-dark table-bordered">
 <thead>
 <tr>
@@ -22,24 +27,23 @@
 
 </thead>
 <tbody>
-{% if budgets_for_selected_month %}
-    {% for budget in budgets_for_selected_month %}
+{% endif %}
+{% if personal_budget_array %}
+    {% for budget in personal_budget_array %}
         <tr>
-        <td>{{ budget.category }}</td>
-        <td>${{ budget.budget_amount | floatformat:2 }}</td>
-        <td>TBD</td>
+        <td>{{ budget.0 }}</td>
+        <td>${{ budget.1 | floatformat:2 }}</td>
+        <td>${{ budget.2 | floatformat:2 }}</td>
        </tr>
     {% endfor %}
-{% else %}
-    Nothing available
-{% endif %}
+
+
 </tbody>
 </table>
-
-<p><strong>Total spend this month: $</strong>{{ total }}
-
-
-
+<p><strong>Total budget this month: $</strong>{{ budget_total|floatformat:2 }}
+<p><strong>Total spend this month: $</strong>{{ total_spend|floatformat:2 }}
+<p><strong>Total budget left: $</strong>{{total_budget_left| floatformat:2}}
+{% endif %}
 {% endblock %}
    </div>
 </div>

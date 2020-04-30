@@ -14,16 +14,16 @@
 <th scope="col">Account Name</th>
 <th scope="col">Account Type</th>
 <th scope="col">Balance</th>
-<th scope="col">Balance Date</th>
+<th scope="col">Balance Date as of</th>
 </thead>
 <tbody>
-{% if show_accounts %}
-    {% for account in show_accounts %}
+{% if account_balance_array %}
+    {% for account in account_balance_array %}
         <tr>
-        <td>{{ account.account_name }}</td>
-        <td>{{ account.account_type }}</td>
-        <td>${{ account.balance | floatformat:2 }}</td>
-        <td>{{ account.balance_date }}</td>
+        <td>{{ account.0 }}</td>
+        <td>{{ account.1 }}</td>
+        <td>${{ account.2| floatformat:2 }}</td>
+        <td>{{ account.3 }}</td>
     {% endfor %}
 {% else %}
     Nothing available
@@ -31,7 +31,7 @@
 </tbody>
 </table>
 
-<p><strong>Current cash in-hand: $</strong>{{ total|floatformat:2 }}
+<p><strong>Current cash in-hand: $</strong>{{ total_cash|floatformat:2 }}
 </div>
 </div>
 </div>

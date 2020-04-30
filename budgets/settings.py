@@ -31,6 +31,7 @@ ALLOWED_HOSTS = []
 # Application definition
 
 INSTALLED_APPS = [
+    'transfers.apps.TransfersConfig',
     'transactions.apps.TransactionsConfig',
     'accounts.apps.AccountsConfig',
     'categories.apps.CategoriesConfig',   
