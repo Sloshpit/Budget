@@ -4,10 +4,10 @@ from accounts.models import Account, AccountBalance
 
 class Transfer(models.Model):
     transfer_amount = models.FloatField()
-    transfer_date = models.DateField()
+    transfer_date = models.DateTimeField()
    #add a category as a foreign key later that pulls this in as a dropdown
-    incoming_account = models.ForeignKey(AccountBalance, on_delete=models.CASCADE, related_name = 'incoming_account')
-    outgoing_account = models.ForeignKey(AccountBalance, on_delete=models.CASCADE)
+    incoming_account = models.ForeignKey(Account, on_delete=models.CASCADE, related_name = 'incoming_account')
+    outgoing_account = models.ForeignKey(Account, on_delete=models.CASCADE)
 
 
 

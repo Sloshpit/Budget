@@ -23,7 +23,7 @@
         <td>{{ transfer.outgoing_account }}</td>
         <td>{{ transfer.incoming_account }}</td>
         <td>${{ transfer.transfer_amount | floatformat:2 }}</td>
-        <td>{{ transfer.transfer_date }}</td>
+        <td>{{ transfer.transfer_date | date:'F d Y' }}</td>
     {% endfor %}
 {% else %}
     Nothing available
