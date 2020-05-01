@@ -12,25 +12,22 @@
 <thead>
 <tr>
 <th scope="col">Account Name</th>
-<th scope="col">Account Type</th>
-<th scope="col">Balance</th>
 <th scope="col">Balance Date as of</th>
+<th scope="col">Balance Amount</th>
 </thead>
 <tbody>
-{% if account_balance_array %}
-    {% for account in account_balance_array %}
+{% if latest_account %}
+    {% for account in  latest_account  %}
         <tr>
-        <td>{{ account.0 }}</td>
-        <td>{{ account.1 }}</td>
-        <td>${{ account.2| floatformat:2 }}</td>
-        <td>{{ account.3 }}</td>
+        <td>{{account.account__account_name}}</td>
+        <td>{{account.balance_date| date:'F d Y'}}</td>
+        <td>${{ account.balance|floatformat:2 }}</td>
     {% endfor %}
 {% else %}
     Nothing available
 {% endif %}
 </tbody>
 </table>
-
 <p><strong>Current cash in-hand: $</strong>{{ total_cash|floatformat:2 }}
 </div>
 </div>

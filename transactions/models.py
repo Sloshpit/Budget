@@ -1,7 +1,7 @@
 from django.db import models
 from django.forms import ModelForm
 from categories.models import Category
-from accounts.models import Account
+from accounts.models import Account, AccountBalance
 
 class Transaction(models.Model):
     store = models.CharField(max_length=200)

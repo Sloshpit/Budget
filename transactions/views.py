@@ -3,7 +3,7 @@ from django.http import HttpResponseRedirect
 from django.template import loader
 from django.db.models import Sum
 from .models import Transaction
-from accounts.models import Account
+from accounts.models import Account,AccountBalance
 from django.urls import reverse_lazy
 from django.views.generic.edit import CreateView, DeleteView, UpdateView
 from django.views.generic.list import ListView
@@ -51,26 +51,22 @@ class TransactionCreate (CreateView):
         trans_date = form.cleaned_data['trans_date']
         amount = form.cleaned_data['amount']
         description = form.cleaned_data ['description']
+        store = form.cleaned_data ['store']
         acct_name = form.cleaned_data ['account_name']
-
+        category = form.cleaned_data ['category']
         self.object = form.save()
 
-        # get the account type
-        account_name = Account.objects.filter(account_name=acct_name).latest().values('account_name')
-        account_type = Account.objects.filter(account_name=acct_name).latest().values('account_type')
-#        acct_balance_date = Account.objects.filter(account_name=acct_name).latest('balance_date')
-#        acct_type = Account.objects.filter().latest('balance_date')
-#        acct_balance = Account.objects.filter(account_name=acct_name).latest('balance_date')
-        print ('---Latest Account Record----------------')
- #       print (acct_balance_date)
-  #      print (acct_type)
-  #      print (acct_balance)
-        print (account_name)
-        print (account_type)
-        print ('----Close Latest Account Record----------------')
-        #if the trasanction date
+        balance_description = str(store) +" "+ str(category)
+        #last_account_for_account_name = AccountBalance.objects.filter(account_name=acct_name).last()
+        latest_account = AccountBalance.objects.filter(account__account_name=acct_name).values('account__account_name', 'balance', 'balance_date').latest('balance_date')
 
-
+        account_balance=latest_account['balance']
+        new_account_balance=amount + float(account_balance)
+        print (new_account_balance)
+        now = datetime.today()
+        new_record = AccountBalance(account=acct_name, balance_description = balance_description, balance=new_account_balance, balance_date=now)
+        new_record.save()
+       
         return super().form_valid(form)
 
     #fields = '__all__'
