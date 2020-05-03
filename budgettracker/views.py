@@ -38,8 +38,6 @@ def get_cat_budget(request):
 
 def index(request):
     template = loader.get_template ('budgettracker/index.html')
-    Account.objects.all().delete()
-    AccountList.objects.all().delete()
     personal_budget_array =[]
     if request.method == 'POST':
         form = GetDateForm(request.POST)

@@ -12,22 +12,21 @@ from datetime import date
 import numpy as np
 
 def index(request):
+    total_cash = 0
     template = loader.get_template ('accounts/index.html')
     account_list = Account.objects.values_list('account_name', flat=True).distinct()
     latest_account = []
-   # latest_account = []
+
     for account in account_list:
         latest_account.append(AccountBalance.objects.filter(account__account_name=account).values ('account__account_name', 'balance', 'balance_date').latest('balance_date'))
-        #account_name = AccountBalance.objects.filter(account__account_name=account).values('account__account_name').latest('balance_date')
-        #balance = AccountBalance.objects.filter(account__account_name=account).values('balance').latest('balance_date')        
-        #balance_date = AccountBalance.objects.filter(account__account_name=account).values('balance_date').latest('balance_date')          
-        #latest_account.append((account_name, balance_date, balance))
-    #current_account_balances = AccountBalance.objects.values('account__account_name').annotate(Max('balance_date'))
-    print ('--------------')
-    print (latest_account)
-    print ('--------------')
+
+    for account in latest_account:
+        total_cash= account['balance'] + total_cash
+    
+    print (total_cash)
     context = {
-        'latest_account': latest_account,
+          'latest_account': latest_account,
+          'total_cash': total_cash,
        }
     return HttpResponse(template.render(context, request))
 
