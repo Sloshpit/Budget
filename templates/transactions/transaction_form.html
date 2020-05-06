@@ -13,4 +13,17 @@
     <div class="mt-2"></div>
     <button type="submit" class="btn btn-primary">Submit</button>
   </form>
+ {% block javascript %}
+  	<script>
+  $(document).ready(function(){
+    the_value = $('#id_amount').val();
+    if (the_value <0)
+    {
+      the_value=the_value*-1;
+      $('#id_amount').val(the_value);
+    }
+  });
+  </script>
+
+{% endblock %} 
 {% endblock %}
