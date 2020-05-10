@@ -21,12 +21,13 @@ class CreateTransactionForm(forms.ModelForm):
         }
 
     def clean_amount(self):
-
        for field, value in self.cleaned_data.items():
-           if self.cleaned_data['transaction_type']=='spend':
-               amount = self.cleaned_data['amount'] *-1
-       return amount
+            amount = self.cleaned_data['amount']
 
+       if self.cleaned_data['transaction_type']=='spend':
+               amount = amount *-1
+ 
+       return amount
     
     def clean_trans_date(self):
         trans_date = self.cleaned_data['trans_date']
@@ -48,6 +49,8 @@ class CreateTransactionForm(forms.ModelForm):
         category = self.cleaned_data ['category']
         return (category)
 
+
+
 class UpdateTransactionForm(forms.ModelForm):
     CHOICES = [('spend', 'Spend'), ('income', 'Income/Refund')]
     transaction_type = forms.ChoiceField(
@@ -62,17 +65,16 @@ class UpdateTransactionForm(forms.ModelForm):
             'trans_date': DatePickerInput(), # default date-format %m/%d/%Y will be used
         }
 
+    def clean_trans_date(self):
+        trans_date = self.cleaned_data['trans_date']
+        return trans_date
+    
     def clean_amount(self):
 
        for field, value in self.cleaned_data.items():
            if self.cleaned_data['transaction_type']=='spend':
                amount = self.cleaned_data['amount'] *-1
        return amount
-
-    
-    def clean_trans_date(self):
-        trans_date = self.cleaned_data['trans_date']
-        return trans_date
         
     def clean_description(self):
         description =  self.cleaned_data ['description']

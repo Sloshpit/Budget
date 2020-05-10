@@ -3,14 +3,16 @@ from django.http import HttpResponseRedirect
 from django.template import loader
 from django.db.models import Sum
 from .models import Transaction
+from budgettracker.models import BudgetTracker
 from accounts.models import Account,AccountBalance
 from django.urls import reverse_lazy
 from django.views.generic.edit import CreateView, DeleteView, UpdateView
 from django.views.generic.list import ListView
 from .forms import CreateTransactionForm, UpdateTransactionForm
 from django.shortcuts import render, redirect, reverse
-from datetime import datetime
+from datetime import datetime, date, timedelta
 from calendar import monthrange
+import calendar
 
 
 def index(request):
@@ -52,28 +54,30 @@ class TransactionCreate (CreateView):
         store = form.cleaned_data ['store']
         category = form.cleaned_data ['category']
         acct_name = form.cleaned_data['account_name']
+        print('account name: '+ str(acct_name))
         amount = form.cleaned_data['amount']
         trans_date = form.cleaned_data['trans_date']
         print (type(trans_date))
         self.object = form.save()
+
         now = datetime.today()
         print (type(now))
         balance_description = str(store) +" "+ str(category)
-
         if now.date() == trans_date.date():
         #if record is equal to today
         #last_account_for_account_name = AccountBalance.objects.filter(account_name=acct_name).last()
             latest_account = AccountBalance.objects.filter(account__account_name=acct_name).values('account__account_name', 'balance', 'balance_date').latest('balance_date')
             account_balance=latest_account['balance']
             new_account_balance=amount + float(account_balance)        
-            new_record = AccountBalance(account=acct_name, balance_description = balance_description, balance=new_account_balance, balance_date=trans_date)
+            new_record = AccountBalance(account=acct_name, balance_description = balance_description, balance=new_account_balance, balance_date=now)
             new_record.save()
+
         else:
            #the transaction is in the past so you need to add a new balance and update all the other balances
 
 
            print ('from here calculate a new_record ')
-           records_to_update = AccountBalance.objects.filter(balance_date__gte=trans_date, balance_date__lte = now)
+           records_to_update = AccountBalance.objects.filter(account_account_name=acct_name,balance_date__gte=trans_date, balance_date__lte = now)
            print (records_to_update)
 
            for record in records_to_update:
@@ -86,7 +90,24 @@ class TransactionCreate (CreateView):
            new_account_balance=amount + float(account_balance)        
            new_record = AccountBalance(account=acct_name, balance_description = balance_description, balance=new_account_balance, balance_date=trans_date)
            new_record.save() 
-       
+        first_of_month = (str(trans_date.year)+"-"+ str(trans_date.month)+"-"+"1")
+        days_in_month = calendar.monthrange(trans_date.year, trans_date.month)[1]
+        next_month = trans_date + timedelta (days_in_month)
+        next_first_of_month = (str(next_month.year)+"-"+str(next_month.month)+"-"+"1")
+ #get all transactions for this month, get the budget for the category, do the math on that category
+        transaction_spend = Transaction.objects.filter(category = category, trans_date__range = [first_of_month, trans_date]).aggregate(sum=Sum('amount'))['sum'] or 0.00
+        category_budget = BudgetTracker.objects.filter(category = category, date__range = [first_of_month, trans_date])
+        #category_spend = budget_amount - transaction_spend
+            
+        for spend in category_budget:
+             spend.monthly_spend = transaction_spend
+             spend.save()
+        category_budget = BudgetTracker.objects.filter(category = category, date = next_first_of_month)
+        print  (next_first_of_month)
+        print (category_budget)
+        for budget in category_budget:
+            budget.budget_amount =  budget.budget_amount + transaction_spend
+            budget.save()               
         return super().form_valid(form)
 
     #fields = '__all__'
@@ -111,18 +132,41 @@ class TransactionUpdate (UpdateView):
         category = form.cleaned_data ['category']
         acct_name = form.cleaned_data['account_name']
         amount = form.cleaned_data['amount']
-        print ('-------get-object')
-        print (self.get_object())
-        print (self.object.amount)
-        print ('-----------------')
         amount_difference = amount - self.object.amount
-        print ('difference:')
-        print (amount_difference)
         trans_date = form.cleaned_data['trans_date']
+        self.object = form.save()
+
         balance_records = AccountBalance.objects.filter(account__account_name=acct_name, balance_date__range = [trans_date, today]  )
         for record in balance_records:
             record.balance = record.balance + amount_difference
             record.save()
+   #get all transactions for this month, get the budget for the category, do the math on that category      
+        first_of_month = (str(trans_date.year)+"-"+ str(trans_date.month)+"-"+"1")
+        days_in_month = calendar.monthrange(trans_date.year, trans_date.month)[1]
+        next_month = trans_date + timedelta (days_in_month)
+        next_first_of_month = (str(next_month.year)+"-"+str(next_month.month)+"-"+"1")
+        transaction_spend = Transaction.objects.filter(category = category, trans_date__range = [first_of_month, trans_date]).aggregate(sum=Sum('amount'))['sum'] or 0.00
+
+        category_budget = BudgetTracker.objects.filter(category = category, date__range = [first_of_month, trans_date])
+        category_budget_next_month = BudgetTracker.objects.filter(category = category, date = next_first_of_month)
+
+        #category_spend = budget_amount - transaction_spend
+  
+        for spend in category_budget:
+             spend.monthly_spend = transaction_spend
+             spend.save()
+             for budget in category_budget_next_month:
+                 print (spend.budget_amount)
+                 print (budget.budget_amount)
+                 budget.budget_amount = spend.budget_amount + transaction_spend
+                 print (budget.budget_amount)
+                 budget.save()
+
+
+       # for budget in category_budget:
+       #     budget.budget_amount =  budget.budget_amount + transaction_spend
+       #     budget.save()        
+
         return super().form_valid(form)
 
 class TransactionDelete (DeleteView):
@@ -142,13 +186,31 @@ class TransactionDelete (DeleteView):
         amount = self.object.amount
         trans_date = self.object.trans_date
         acct_name = self.object.account_name
+        category = self.object.category
         account_record_to_delete = AccountBalance.objects.filter(balance_date=trans_date, account=acct_name).delete()
-        records_to_update = AccountBalance.objects.filter(balance_date__gte=trans_date, balance_date__lte = today)
-
+        records_to_update = AccountBalance.objects.filter(account=acct_name, balance_date__gte=trans_date, balance_date__lte = today)
         for record in records_to_update:
             record.balance = record.balance - amount
             record.save()
-        
+   #get all transactions for this month, get the budget for the category, do the math on that category      
+        first_of_month = (str(trans_date.year)+"-"+ str(trans_date.month)+"-"+"1")
+        days_in_month = calendar.monthrange(trans_date.year, trans_date.month)[1]
+        next_month = trans_date + timedelta (days_in_month)
+        next_first_of_month = (str(next_month.year)+"-"+str(next_month.month)+"-"+"1")
+        transaction_spend = Transaction.objects.filter(category = category, trans_date__range = [first_of_month, trans_date]).aggregate(sum=Sum('amount'))['sum'] or 0.00
+
+        category_budget = BudgetTracker.objects.filter(category = category, date__range = [first_of_month, trans_date])
+        category_budget_next_month = BudgetTracker.objects.filter(category = category, date = next_first_of_month)
+
+        #category_spend = budget_amount - transaction_spend
+  
+        for spend in category_budget:
+             spend.monthly_spend = spend.monthly_spend - amount
+             spend.save()
+             for budget in category_budget_next_month:
+                 budget.budget_amount = budget.budget_amount - amount
+                 budget.save()
+
         return super(TransactionDelete, self).delete(*args, **kwargs)
 
 class TransactionList (ListView): 

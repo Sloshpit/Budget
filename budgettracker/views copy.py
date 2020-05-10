@@ -62,16 +62,31 @@ def index(request):
              
              startdate = start_year+"-"+ start_mnth+ "-" + start_day
 
-             budgets_for_selected_month = BudgetTracker.objects.filter(date__range=[startdate,enddate]).exclude(category=28)
-             budget_total =  BudgetTracker.objects.filter(date__range=[startdate,enddate]).exclude(category=28).aggregate(sum=Sum('budget_amount'))['sum'] or 0.00
-             total_spend =  BudgetTracker.objects.filter(date__range=[startdate,enddate]).exclude(category=28).aggregate(sum=Sum('monthly_spend'))['sum'] or 0.00
-             total_left = float(budget_total) + float(total_spend)
+             budgets_for_selected_month= BudgetTracker.objects.filter(date__range=[startdate,enddate]).exclude(category=28)
+             #get all the transactions for each budgettracker item
+             for budget in budgets_for_selected_month:
+                 #category_transactions = Transaction.objects.filter(category=budget.category)
+                 category_transactions_spend = Transaction.objects.filter(category=budget.category, trans_date__range = [startdate, enddate]).aggregate(sum=Sum('amount'))['sum'] or 0.00
+                 personal_budget_array.append((budget.category, budget.budget_amount, category_transactions_spend))
+
+             budget_total = BudgetTracker.objects.filter(date__range=[startdate, enddate]).exclude(category=28).aggregate(sum=Sum('budget_amount'))['sum'] or 0.00
+             budget_total = "{:.2f}".format(budget_total)            
+             budget_month_date = datetime.strftime(start_month, '%b %Y')
+           
+             total_spend = 0
+           
+             for personal_budget in personal_budget_array:
+                 total_spend = total_spend + personal_budget[2]
+             total_budget_left = float(budget_total) + float(total_spend)
+           
              context ={
                 'budgets_for_selected_month': budgets_for_selected_month,
-                'total_spend' : total_spend,
-                'total_left': total_left,
-                'budget_total': budget_total,
-                'budget_month_date' : start_month,
+                'budget_total':budget_total,
+                'budget_month_date':budget_month_date,
+                'form': form,
+                'personal_budget_array': personal_budget_array,
+                'total_spend': total_spend,
+                'total_budget_left': total_budget_left
                 }
              return HttpResponse((template.render(context,request)))
     else:

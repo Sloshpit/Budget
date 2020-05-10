@@ -5,4 +5,6 @@ class Category(models.Model):
     category = models.CharField(max_length=200)
     def __str__(self):
         return self.category
-        
+
+    def get_absolute_url(self):
+        return reverse('categories-index', args=[self.id])

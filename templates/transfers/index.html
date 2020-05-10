@@ -1,6 +1,6 @@
 {% extends 'base.html' %}
 {% block content %}
-<div class="container">
+<div class="container-fluid">
       <div class="row justify-content-center">
         <div class="col-8">
           <h1 class="mt-2">Transfer List</h1>
@@ -15,6 +15,8 @@
 <th scope="col">Incoming Account</th>
 <th scope="col">Transfer Amount</th>
 <th scope="col">Date</th>
+<th scope="col">Action</th>
+
 </thead>
 <tbody>
 {% if show_transfers %}
@@ -24,7 +26,8 @@
         <td>{{ transfer.incoming_account }}</td>
         <td>${{ transfer.transfer_amount | floatformat:2 }}</td>
         <td>{{ transfer.transfer_date | date:'F d Y' }}</td>
-    {% endfor %}
+        <td><a class = "btn btn-danger" href="{%url "transfer-delete" transfer.id%}">Delete</a> <a class = "btn btn-warning" href="{%url "transfer-update" transfer.id%}">Update</a></td>    
+        {% endfor %}
 {% else %}
     Nothing available
 {% endif %}

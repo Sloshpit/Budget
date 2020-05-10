@@ -3,6 +3,10 @@ from django.template import loader
 from django.db.models import Sum
 from transactions.models import Transaction
 from .models import Category
+from django.views.generic.edit import CreateView, DeleteView, UpdateView
+from .forms import CategoryForm
+from django.shortcuts import render, redirect, reverse
+from django.urls import reverse_lazy
 
 
 def index(request):
@@ -18,4 +22,21 @@ def index(request):
         'total': total,
     }
     return HttpResponse(template.render(context, request))
-    
+
+class CreateCategory(CreateView):
+     template_name = 'categories/categories_form.html'
+     form_class = CategoryForm
+     success_url = reverse_lazy('categories-index') 
+     model = Category
+
+class UpdateCategory(UpdateView):
+     template_name = 'categories/categories_form.html'
+     form_class = CategoryForm
+     success_url = reverse_lazy('categories-index') 
+     model = Category
+
+class DeleteCategory(DeleteView):
+     template_name = 'categories/categories_delete.html'
+     form_class = CategoryForm
+     success_url = reverse_lazy('categories-index') 
+     model = Category

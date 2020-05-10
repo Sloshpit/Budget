@@ -15,5 +15,5 @@ class CreateBudget(forms.ModelForm):
         model = BudgetTracker
         fields ='__all__'
         widgets = {
-            'date': DatePickerInput(), # default date-format %m/%d/%Y will be used
+            'date': MonthPickerInput(), # default date-format %m/%d/%Y will be used
         }

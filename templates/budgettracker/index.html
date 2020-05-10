@@ -21,19 +21,19 @@
 <table class="table table-dark table-bordered">
 <thead>
 <tr>
-<th scope="col">Description</th>
+<th scope="col">Category</th>
 <th scope="col">Monthly Budget</th>
 <th scope="col">Monthly Spend</th>
 
 </thead>
 <tbody>
 {% endif %}
-{% if personal_budget_array %}
-    {% for budget in personal_budget_array %}
+{% if budgets_for_selected_month %}
+    {% for budget in budgets_for_selected_month %}
         <tr>
-        <td>{{ budget.0 }}</td>
-        <td>${{ budget.1 | floatformat:2 }}</td>
-        <td>${{ budget.2 | floatformat:2 }}</td>
+        <td>{{ budget.category }}</td>
+        <td>${{ budget.budget_amount | floatformat:2 }}</td>
+        <td>${{ budget.monthly_spend | floatformat:2 }}</td>
        </tr>
     {% endfor %}
 
@@ -42,7 +42,7 @@
 </table>
 <p><strong>Total budget this month: $</strong>{{ budget_total|floatformat:2 }}
 <p><strong>Total spend this month: $</strong>{{ total_spend|floatformat:2 }}
-<p><strong>Total budget left: $</strong>{{total_budget_left| floatformat:2}}
+<p><strong>Total budget left: $</strong>{{total_left| floatformat:2}}
 {% endif %}
 {% endblock %}
    </div>
