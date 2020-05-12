@@ -6,6 +6,7 @@ from .models import Account, AccountBalance
 from django.db.models import Max
 from transfers.models import Transfer
 from transactions.models import Transaction
+from categories.models import Category
 from django.shortcuts import render
 from .forms import GetDateForm, AccountForm
 from datetime import date
@@ -35,9 +36,6 @@ def index(request):
     return HttpResponse(template.render(context, request))
 
 
-
-
-
 class CreateAccount(CreateView):
      template_name = 'accounts/accounts_form.html'
      form_class = AccountForm
@@ -52,8 +50,14 @@ class CreateAccount(CreateView):
         balance_description = 'initial'
         self.object = form.save()    
         account_record = Account.objects.filter(account_name=account_name)
+        category = Category.objects.filter(category='Initial Balance')
+        print ('category:')
+        print (category)
         new_record = AccountBalance(account=account_record[0], balance_description = balance_description, balance=initial_balance, balance_date=date)        
         new_record.save() 
+        initial_balance_transaction = Transaction(store=account_name, description = balance_description, amount = initial_balance, trans_date = date, category= category[0], account_name = account_record[0])
+        initial_balance_transaction.save()
+        print (initial_balance_transaction)
         return super().form_valid(form)
 
 class UpdateAccount(UpdateView):
@@ -65,5 +69,5 @@ class UpdateAccount(UpdateView):
 class DeleteAccount(DeleteView):
      template_name = 'accounts/accounts_delete.html'
      form_class = AccountForm
-     success_url = reverse_lazy('account-index') 
+     success_url = reverse_lazy('accounts-index') 
      model = Account

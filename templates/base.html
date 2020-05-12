@@ -21,22 +21,53 @@
       <li class="nav-item active">
         <a class="nav-link" href="/admin/login/?next=/admin/">admin <span class="sr-only">(current)</span></a>
       </li>
-      <li class="nav-item">
-        <a class="nav-link" href="/budgettracker/">budget tracking</a>
+        <li class="nav-item dropdown">
+        <a class="nav-link dropdown-toggle" href="/budgettracker" id="navbarDropdownMenuLink" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+          Budget Tracking
+        </a>
+        <div class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink">
+          <a class="dropdown-item" href="/budgettracker">Monthly Budget</a>
+          <a class="dropdown-item" href="/budgettracker/add">Add a Budget</a>
+        </div>
       </li>
-      <li class="nav-item">
-        <a class="nav-link" href="/transactions/">transactions</a>
+          <li class="nav-item dropdown">
+        <a class="nav-link dropdown-toggle" href="#" id="navbarDropdownMenuLink" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+          Accounts
+        </a>
+        <div class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink">
+          <a class="dropdown-item" href="/accounts/">Account Balances</a>
+          <a class="dropdown-item" href="/accounts/add">Add an Account</a>
+        </div>
       </li>
-      <li class="nav-item">
-        <a class="nav-link" href="/transfers/">transfers</a>
+        <li class="nav-item dropdown">
+        <a class="nav-link dropdown-toggle" href="#" id="navbarDropdownMenuLink" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+          Transactions
+        </a>
+        <div class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink">
+          <a class="dropdown-item" href="/transactions/">Transactions</a>
+          <a class="dropdown-item" href="/transactions/add">Add a Transaction</a>
+        </div>
       </li>
-
-      <li class="nav-item">
-        <a class="nav-link" href="/accounts/">accounts</a>
-      </li>      <li class="nav-item">
-        <a class="nav-link" href="/categories/">categories</a>
+        <li class="nav-item dropdown">
+        <a class="nav-link dropdown-toggle" href="#" id="navbarDropdownMenuLink" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+          Transfers
+        </a>
+        <div class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink">
+          <a class="dropdown-item" href="/tranactions/">Transfers</a>
+          <a class="dropdown-item" href="/transfers/add">Add a Transfer</a>
+        </div>
       </li>
-      </li>      
+            </li>
+        <li class="nav-item dropdown">
+        <a class="nav-link dropdown-toggle" href="#" id="navbarDropdownMenuLink" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+          Categories
+        </a>
+        <div class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink">
+          <a class="dropdown-item" href="/categories/">Categories</a>
+          <a class="dropdown-item" href="/categories/add">Add a Category</a>
+        </div>
+      </li>
+    </ul>
     <form class="form-inline my-2 my-lg-0">
       <input class="form-control mr-sm-2" type="search" placeholder="Search" aria-label="Search">
       <button class="btn btn-outline-success my-2 my-sm-0" type="submit">Search</button>

@@ -1,0 +1,20 @@
+{% extends 'base.html' %}
+
+{% load crispy_forms_tags %}
+
+{% block content %}
+<div class="container">
+      <div class="row justify-content-center">
+        <div class="col-8">
+          <h1 class="mt-2">Delete a Record</h1>
+  <form method="post">
+    {% csrf_token %}
+    {{ form|crispy }}
+    <div class="mt-2"></div>
+    <p>You sure you want to delete your <strong>{{ budgettracker.category }} </strong> transaction with an <strong>amount of ${{budgettracker.budget_amount|floatformat:2}}</strong> dated on <strong>{{budgetracker.date}}</strong></p>
+                <input class="btn btn-success" 
+                       type="button" value="Keep the record - it is nice" 
+                       onclick="window.history.go(-1);"/>
+                <input class="btn btn-danger" type="submit" value="Destroy this record!"/>
+            </form>  </form>
+{% endblock %}

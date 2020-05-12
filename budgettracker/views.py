@@ -1,15 +1,15 @@
 from django.http import HttpResponse, JsonResponse
 from django.template import loader
-from django.db.models import Sum
+from django.db.models import Sum, Max
 from .models import BudgetTracker
+from transactions.models import Transaction
+from accounts.models import Account, AccountBalance
+from transfers.models import Transfer
 from .forms import GetDateForm
 from django.shortcuts import render
 from datetime import datetime, timedelta
 import calendar
 from calendar import monthrange
-from transactions.models import Transaction
-from accounts.models import Account, AccountBalance
-from transfers.models import Transfer
 from .forms import CreateBudget
 from django.views.generic.edit import CreateView, DeleteView, UpdateView
 from django.urls import reverse_lazy
@@ -44,6 +44,8 @@ def index(request):
     if request.method == 'POST':
         form = GetDateForm(request.POST)
         if form.is_valid():
+             form.fields['start_month'].label = "View budget for:"        
+
             #get the start and end date to pull all budget items from the model
              start_month = form.cleaned_data['start_month']
              convert_month = datetime.strftime(start_month, '%b %Y')
@@ -59,24 +61,65 @@ def index(request):
              start_year = str(first_day[0])
              start_mnth = str(first_day[1])
              start_day = str(first_day[2])
-             
+             budget_month = start_month.strftime("%b %Y")
              startdate = start_year+"-"+ start_mnth+ "-" + start_day
+             budgets_for_selected_month = BudgetTracker.objects.filter(date__range=[startdate,enddate])
+             
+             budget_total =  BudgetTracker.objects.filter(date__range=[startdate,enddate]).aggregate(sum=Sum('budget_amount'))['sum'] or 0.00
 
-             budgets_for_selected_month = BudgetTracker.objects.filter(date__range=[startdate,enddate]).exclude(category=28)
-             budget_total =  BudgetTracker.objects.filter(date__range=[startdate,enddate]).exclude(category=28).aggregate(sum=Sum('budget_amount'))['sum'] or 0.00
-             total_spend =  BudgetTracker.objects.filter(date__range=[startdate,enddate]).exclude(category=28).aggregate(sum=Sum('monthly_spend'))['sum'] or 0.00
-             total_left = float(budget_total) + float(total_spend)
-             context ={
-                'budgets_for_selected_month': budgets_for_selected_month,
-                'total_spend' : total_spend,
-                'total_left': total_left,
-                'budget_total': budget_total,
-                'budget_month_date' : start_month,
-                }
-             return HttpResponse((template.render(context,request)))
+             total_spend =  BudgetTracker.objects.filter(date__range=[startdate,enddate]).aggregate(sum=Sum('monthly_spend'))['sum'] or 0.00
+             account_names = Account.objects.values('account_name').distinct()
+             print (account_names)
+             #calculate money left to budget:transactions with initial spend + income records (exclude initial )
+             total_account_balance = 0
+             for acct_name in account_names:
+                latest_account_balance = AccountBalance.objects.filter(account__account_name=acct_name['account_name']).latest('balance_date')
+                print ('----------------------------')
+                print (acct_name['account_name'])
+                total_account_balance = total_account_balance + latest_account_balance.balance
+            #    total_account_balance = total_account_balance + float(latest_account_balance['balance'])
+             print ('--------------------')   
+             print (total_account_balance)
+             initial_balance = Transaction.objects.filter(trans_date__range=[startdate,enddate], category__category="Initial Balance").aggregate(sum=Sum('amount'))['sum'] or 0.00
+             income = Transaction.objects.filter(trans_date__range=[startdate,enddate], amount__gte=0).exclude(category__category="Initial Balance").aggregate(sum=Sum('amount'))['sum'] or 0.00
+             print (initial_balance)
+             print (income)
+             total_left = float(initial_balance) + float(budget_total)
+             #get all refund/income transactions
+             total_budget_left = float(initial_balance) + float(income) - float(budget_total)
+             #print (total_budget_left)
+             form = GetDateForm()   
+             form.fields['start_month'].label = "View budget for:"        
+
+            # return HttpResponse((template.render(context,request)))
+             return render(request, 'budgettracker/index.html', {'form': form, 'budgets_for_selected_month': budgets_for_selected_month,'total_spend' : total_spend, 'total_left': total_left,'budget_total': budget_total, 'budget_month_date' : budget_month,'total_budget_left' : total_budget_left,})
+
     else:
+        today = datetime.today()
+        num_days = monthrange(today.year, today.month)
+        enddate = (str(today.year)+"-"+str(today.month)+"-"+ str(num_days[1]))
+        startdate = (str(today.year) +"-" +str(today.month)+"-"+str(1))
+        budgets_for_selected_month = BudgetTracker.objects.filter(date__range=[startdate,enddate])
+        budget_total =  BudgetTracker.objects.filter(date__range=[startdate,enddate]).aggregate(sum=Sum('budget_amount'))['sum'] or 0.00
+
+        total_spend =  BudgetTracker.objects.filter(date__range=[startdate,enddate]).aggregate(sum=Sum('monthly_spend'))['sum'] or 0.00
+        account_names = Account.objects.values('account_name').distinct()
+        print (account_names)
+             #calculate money left to budget:transactions with initial spend + income records (exclude initial )
+        total_account_balance = 0
+        for acct_name in account_names:
+            latest_account_balance = AccountBalance.objects.filter(account__account_name=acct_name['account_name']).latest('balance_date')
+            total_account_balance = total_account_balance + latest_account_balance.balance
+            initial_balance = Transaction.objects.filter(trans_date__range=[startdate,enddate], category__category="Initial Balance").aggregate(sum=Sum('amount'))['sum'] or 0.00
+            income = Transaction.objects.filter(trans_date__range=[startdate,enddate], amount__gte=0).exclude(category__category="Initial Balance").aggregate(sum=Sum('amount'))['sum'] or 0.00
+            total_left = float(initial_balance) + float(budget_total)
+             #get all refund/income transactions
+            total_budget_left = float(initial_balance) + float(income) - float(budget_total)
+             #print (total_budget_left)
         form = GetDateForm()
-    return render(request, 'budgettracker/index.html', {'form': form})
+        form.fields['start_month'].label = "View budget for:"        
+        budget_month = today.strftime("%b %Y")
+    return render(request, 'budgettracker/index.html', {'form': form, 'budgets_for_selected_month': budgets_for_selected_month,'total_spend' : total_spend, 'total_left': total_left,'budget_total': budget_total, 'budget_month_date' : budget_month,'total_budget_left' : total_budget_left,})
 
 
 class BudgettrackerCreate (CreateView):
@@ -100,7 +143,7 @@ class BudgettrackerCreate (CreateView):
 
 
 class BudgettrackerUpdate (UpdateView):
-    template_name = 'budgetTracker/budgettracker_form.html'
+    template_name = 'budgettracker/budgettracker_form.html'
     form_class = CreateBudget
     success_url = reverse_lazy('budgettracker-index') 
     #form = CreateTransactionForm
@@ -113,6 +156,6 @@ class BudgettrackerDelete (DeleteView):
     form_class = CreateBudget
     #success_url = reverse_lazy('transaction-index') 
     template_name = 'budgettracker/budgettracker_delete.html'
-    context_object_name = 'budgettracker'
+ #   context_object_name = 'budgettracker'
     success_url = reverse_lazy('budgettracker-index')
     #fields ='__all__'

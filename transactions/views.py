@@ -59,7 +59,16 @@ class TransactionCreate (CreateView):
         trans_date = form.cleaned_data['trans_date']
         print (type(trans_date))
         self.object = form.save()
-
+        bud_date = str(trans_date.year) +"-" +str(trans_date.month) + "-"+ "1"
+        print (bud_date)
+        print ('amount:')
+        print (amount)
+        if not BudgetTracker.objects.filter(date=bud_date).exists():
+            bud_amount = amount
+            if amount < 0:
+                bud_amount = bud_amount *-1
+            new_budget = BudgetTracker(category=category, budget_amount = bud_amount, monthly_spend = '0', date = bud_date)
+            new_budget.save()
         now = datetime.today()
         print (type(now))
         balance_description = str(store) +" "+ str(category)
@@ -72,12 +81,13 @@ class TransactionCreate (CreateView):
             new_record = AccountBalance(account=acct_name, balance_description = balance_description, balance=new_account_balance, balance_date=now)
             new_record.save()
 
+
         else:
            #the transaction is in the past so you need to add a new balance and update all the other balances
 
 
            print ('from here calculate a new_record ')
-           records_to_update = AccountBalance.objects.filter(account_account_name=acct_name,balance_date__gte=trans_date, balance_date__lte = now)
+           records_to_update = AccountBalance.objects.filter(account__account_name=acct_name,balance_date__gte=trans_date, balance_date__lte = now)
            print (records_to_update)
 
            for record in records_to_update:

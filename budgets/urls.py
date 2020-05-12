@@ -23,5 +23,4 @@ urlpatterns = [
     path('categories/', include('categories.urls')),    
     path('budgettracker/', include('budgettracker.urls')),    
     path('admin/', admin.site.urls),
-    path ('',include ('budgettracker.urls')),
 ]
