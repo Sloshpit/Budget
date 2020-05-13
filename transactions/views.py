@@ -51,6 +51,7 @@ class TransactionCreate (CreateView):
      model = Transaction
 
      def form_valid(self, form):
+        now = datetime.today()
         store = form.cleaned_data ['store']
         category = form.cleaned_data ['category']
         acct_name = form.cleaned_data['account_name']
@@ -58,48 +59,57 @@ class TransactionCreate (CreateView):
         amount = form.cleaned_data['amount']
         trans_date = form.cleaned_data['trans_date']
         print (type(trans_date))
+        print ('----------trans_date')
+        print (trans_date)
         self.object = form.save()
         bud_date = str(trans_date.year) +"-" +str(trans_date.month) + "-"+ "1"
         print (bud_date)
         print ('amount:')
         print (amount)
+        #create a category budget for a transaction if it does not exist
         if not BudgetTracker.objects.filter(date=bud_date).exists():
             bud_amount = amount
             if amount < 0:
                 bud_amount = bud_amount *-1
             new_budget = BudgetTracker(category=category, budget_amount = bud_amount, monthly_spend = '0', date = bud_date)
             new_budget.save()
-        now = datetime.today()
-        print (type(now))
-        balance_description = str(store) +" "+ str(category)
-        if now.date() == trans_date.date():
-        #if record is equal to today
-        #last_account_for_account_name = AccountBalance.objects.filter(account_name=acct_name).last()
-            latest_account = AccountBalance.objects.filter(account__account_name=acct_name).values('account__account_name', 'balance', 'balance_date').latest('balance_date')
-            account_balance=latest_account['balance']
-            new_account_balance=amount + float(account_balance)        
-            new_record = AccountBalance(account=acct_name, balance_description = balance_description, balance=new_account_balance, balance_date=now)
-            new_record.save()
+        # get the latest account balance based on the transaction date.  This should account for a present record and going into the past.
 
+        #latest_account = AccountBalance.objects.filter(account__account_name=acct_name).values('account__account_name', 'balance', 'balance_date').latest('balance_date')
+        latest_account = AccountBalance.objects.filter(account__account_name = acct_name, balance_date__lte=trans_date).values('account__account_name', 'balance', 'balance_date').order_by("-balance_date")[0]
+        print (latest_account)
+        print('--------latest acount----')
+        latest_account_date = latest_account['balance_date']
+        print (latest_account_date.date())
+
+        if latest_account_date.date() == trans_date:
+            
+            new_balance = latest_account['balance'] + amount
+            print (new_balance)
+            update_account = AccountBalance.objects.filter(account__account_name = acct_name, balance_date__lte=trans_date).update(balance = new_balance)
+ 
+            records_to_update = AccountBalance.objects.filter(account__account_name=acct_name,balance_date__gt=trans_date, balance_date__lte = now.date())
+            print (records_to_update)
+        #update all potential future record balances
+            for record in records_to_update:
+                record.balance = record.balance + amount
+                record.save() 
 
         else:
-           #the transaction is in the past so you need to add a new balance and update all the other balances
-
-
-           print ('from here calculate a new_record ')
-           records_to_update = AccountBalance.objects.filter(account__account_name=acct_name,balance_date__gte=trans_date, balance_date__lte = now)
-           print (records_to_update)
-
-           for record in records_to_update:
+            print ('inside else')
+        #create a new balance record if one doesn't exist for that date
+            balance_description = str(store) +" "+ str(category)
+            new_account_balance=amount + float(latest_account['balance'])        
+            new_record = AccountBalance(account=acct_name, balance_description = balance_description, balance=new_account_balance, balance_date=trans_date)
+            new_record.save()
+            records_to_update = AccountBalance.objects.filter(account__account_name=acct_name,balance_date__gt=trans_date, balance_date__lte = now.date())
+            print (records_to_update)
+        #update any potential future records
+            for record in records_to_update:
                 record.balance = record.balance + amount
-                record.save()   
-           latest_account = AccountBalance.objects.filter(balance_date__lt=trans_date).order_by("-balance_date")[0]
-           print ('------in else---got the latest record in the past')
-           print (latest_account)
-           account_balance=latest_account.balance
-           new_account_balance=amount + float(account_balance)        
-           new_record = AccountBalance(account=acct_name, balance_description = balance_description, balance=new_account_balance, balance_date=trans_date)
-           new_record.save() 
+                record.save() 
+
+
         first_of_month = (str(trans_date.year)+"-"+ str(trans_date.month)+"-"+"1")
         days_in_month = calendar.monthrange(trans_date.year, trans_date.month)[1]
         next_month = trans_date + timedelta (days_in_month)
@@ -113,7 +123,6 @@ class TransactionCreate (CreateView):
              spend.monthly_spend = transaction_spend
              spend.save()
         category_budget = BudgetTracker.objects.filter(category = category, date = next_first_of_month)
-        print  (next_first_of_month)
         print (category_budget)
         for budget in category_budget:
             budget.budget_amount =  budget.budget_amount + transaction_spend

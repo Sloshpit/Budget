@@ -87,6 +87,12 @@ def index(request):
              total_left = float(initial_balance) + float(budget_total)
              #get all refund/income transactions
              total_budget_left = float(initial_balance) + float(income) - float(budget_total)
+             print ('-------------------')
+             print (total_budget_left)
+             print (initial_balance)
+             print (income)
+             print (budget_total)
+             print ('----------------')
              #print (total_budget_left)
              form = GetDateForm()   
              form.fields['start_month'].label = "View budget for:"        
@@ -115,6 +121,12 @@ def index(request):
             total_left = float(initial_balance) + float(budget_total)
              #get all refund/income transactions
             total_budget_left = float(initial_balance) + float(income) - float(budget_total)
+            print ('-------------------')
+            print (total_budget_left)
+            print (initial_balance)
+            print (income)
+            print (budget_total)
+            print ('----------------')
              #print (total_budget_left)
         form = GetDateForm()
         form.fields['start_month'].label = "View budget for:"        

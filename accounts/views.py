@@ -14,8 +14,11 @@ import numpy as np
 from django.views.generic.edit import CreateView, DeleteView, UpdateView
 from django.shortcuts import render, redirect, reverse
 from django.urls import reverse_lazy
-
+from pytz import timezone
+import pytz
+from tzlocal import get_localzone
 def index(request):
+    print ('in index')
     total_cash = 0
     template = loader.get_template ('accounts/index.html')
     account_list = AccountBalance.objects.values_list('account__account_name', flat=True).distinct()
@@ -46,16 +49,16 @@ class CreateAccount(CreateView):
         account_name = form.cleaned_data['account_name']
         initial_balance = form.cleaned_data['initial_balance']
         date = form.cleaned_data ['date']
+
         account_type = form.cleaned_data['account_type']
         balance_description = 'initial'
         self.object = form.save()    
         account_record = Account.objects.filter(account_name=account_name)
         category = Category.objects.filter(category='Initial Balance')
-        print ('category:')
         print (category)
-        new_record = AccountBalance(account=account_record[0], balance_description = balance_description, balance=initial_balance, balance_date=date)        
+        new_record = AccountBalance(account=account_record[0], balance_description = balance_description, balance=initial_balance, balance_date=date.date())        
         new_record.save() 
-        initial_balance_transaction = Transaction(store=account_name, description = balance_description, amount = initial_balance, trans_date = date, category= category[0], account_name = account_record[0])
+        initial_balance_transaction = Transaction(store=account_name, description = balance_description, amount = initial_balance, trans_date = date.date(), category= category[0], account_name = account_record[0])
         initial_balance_transaction.save()
         print (initial_balance_transaction)
         return super().form_valid(form)

@@ -17,7 +17,7 @@ class CreateTransactionForm(forms.ModelForm):
         model = Transaction
         fields =('store','description','transaction_type','category','amount', 'trans_date','account_name')
         widgets = {
-            'trans_date': DatePickerInput(), # default date-format %m/%d/%Y will be used
+            'trans_date': DatePickerInput(format='%m/%d/%Y'), # default date-format %m/%d/%Y will be used
         }
 
     def clean_amount(self):

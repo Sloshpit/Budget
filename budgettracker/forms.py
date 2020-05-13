@@ -7,6 +7,7 @@ class GetDateForm(forms.Form):
         widget=
         MonthPickerInput(format='%Y-%m'), initial=datetime.date.today(), input_formats=["%Y-%m"]
     )
+    
 # validation datefield
 
 class CreateBudget(forms.ModelForm):
