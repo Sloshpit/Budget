@@ -35,10 +35,11 @@ class CreateTransfer(CreateView):
         outgoing_account = form.cleaned_data ['outgoing_account']
         self.object = form.save()
         now = datetime.today()
+        print (transfer_date)
 
         balance_description = "Account Transfer from "+str(incoming_account) +" "+ "To " +str(outgoing_account)
         
-        if now.date() == transfer_date.date():
+        if now == transfer_date:
              latest_incoming_account = AccountBalance.objects.filter(account__account_name=incoming_account).values('account__account_name', 'balance', 'balance_date').latest('balance_date')
              print (latest_incoming_account)
              latest_outgoing_account = AccountBalance.objects.filter(account__account_name=outgoing_account).values('account__account_name', 'balance', 'balance_date').latest('balance_date')

@@ -14,7 +14,6 @@
 <th scope="col">Account Name</th>
 <th scope="col">Balance Date as of</th>
 <th scope="col">Balance Amount</th>
-<th scope="col">Actions</th>
 </thead>
 <tbody>
 {% if latest_account %}
@@ -29,7 +28,8 @@
 {% endif %}
 </tbody>
 </table>
-<p><strong>Current cash in-hand: $</strong>{{total_cash|floatformat:2 }}
+<p><strong>Current cash in-hand: $</strong>{{total_cash|floatformat:2 }}</p>
+<p>Note: Negative balance means money is owing.  Generally loans and credit cards have a negative balance </p>
 </div>
 </div>
 </div>

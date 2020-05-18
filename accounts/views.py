@@ -23,9 +23,10 @@ def index(request):
     template = loader.get_template ('accounts/index.html')
     account_list = AccountBalance.objects.values_list('account__account_name', flat=True).distinct()
     latest_account = []
-
+    today = str(date.today())
+    print (today)
     for account in account_list:
-        latest_account.append(AccountBalance.objects.filter(account__account_name=account).values ('account__account_name', 'balance', 'balance_date').latest('balance_date'))
+        latest_account.append(AccountBalance.objects.filter(account__account_name=account, balance_date__lte=today).values ('account__account_name', 'balance', 'balance_date').latest('balance_date'))
     print (latest_account)
 
     for account in latest_account:

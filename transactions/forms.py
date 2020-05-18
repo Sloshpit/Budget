@@ -15,9 +15,9 @@ class CreateTransactionForm(forms.ModelForm):
     )
     class Meta:
         model = Transaction
-        fields =('store','description','transaction_type','category','amount', 'trans_date','account_name')
+        fields =('store','description','transaction_type','category','amount', 'account_name', 'trans_date')
         widgets = {
-            'trans_date': DatePickerInput(format='%m/%d/%Y'), # default date-format %m/%d/%Y will be used
+            'trans_date': DatePickerInput(format='%m/%d/%Y').start_of('transaction days'), # default date-format %m/%d/%Y will be used
         }
 
     def clean_amount(self):

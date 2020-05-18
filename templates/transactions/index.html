@@ -25,7 +25,8 @@
     {% for transaction in show_transactions %}
         <tr>
         <td>{{ transaction.store }}</td>
-        <td>{{ transaction.category }}</td>
+        <td> <a href="{%url "category-details" transaction.category_id%}">{{transaction.category}}</a></td>        
+        <td>{{ transaction.category_id }}</td>
         <td>{{ transaction.description }}</td>
         <td>${{ transaction.amount | floatformat:2 }}</td>
         <td>{{ transaction.trans_date }}</td>

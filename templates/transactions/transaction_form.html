@@ -16,13 +16,28 @@
  {% block javascript %}
   	<script>
   $(document).ready(function(){
+
     the_value = $('#id_amount').val();
     if (the_value <0)
     {
       the_value=the_value*-1;
       $('#id_amount').val(the_value);
     }
+
   });
+      $('#id_account_name').change(function(){
+       var account = $(this).val();
+       $.ajax({
+         url: 'ajax/get_account',
+         data:{
+           'account': account
+         },
+         dataType:'json',
+         success: function (data){
+         $('#id_trans_date').data("DateTimePicker").minDate(data.date);
+         }
+       });    
+       });
   </script>
 
 {% endblock %} 
