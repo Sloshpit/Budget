@@ -17,16 +17,21 @@ from django.urls import reverse_lazy
 from pytz import timezone
 import pytz
 from tzlocal import get_localzone
+from django.contrib.auth.decorators import login_required
+from django.contrib.auth.mixins import LoginRequiredMixin
+
+@login_required
+
 def index(request):
     print ('in index')
     total_cash = 0
     template = loader.get_template ('accounts/index.html')
-    account_list = AccountBalance.objects.values_list('account__account_name', flat=True).distinct()
+    account_list = AccountBalance.objects.filter(account__user=request.user).values_list('account__account_name', flat=True).distinct()
     latest_account = []
     today = str(date.today())
     print (today)
     for account in account_list:
-        latest_account.append(AccountBalance.objects.filter(account__account_name=account, balance_date__lte=today).values ('account__account_name', 'balance', 'balance_date').latest('balance_date'))
+        latest_account.append(AccountBalance.objects.filter(account__account_name=account, balance_date__lte=today, account__user=request.user).values ('account__account_name', 'balance', 'balance_date').latest('balance_date'))
     print (latest_account)
 
     for account in latest_account:
@@ -40,7 +45,7 @@ def index(request):
     return HttpResponse(template.render(context, request))
 
 
-class CreateAccount(CreateView):
+class CreateAccount(LoginRequiredMixin,CreateView):
      template_name = 'accounts/accounts_form.html'
      form_class = AccountForm
      success_url = reverse_lazy('accounts-index') 
@@ -50,10 +55,10 @@ class CreateAccount(CreateView):
         account_name = form.cleaned_data['account_name']
         initial_balance = form.cleaned_data['initial_balance']
         date = form.cleaned_data ['date']
-
         account_type = form.cleaned_data['account_type']
         balance_description = 'initial'
-        self.object = form.save()    
+        form.instance.user = self.request.user
+        self.object = form.save()
         account_record = Account.objects.filter(account_name=account_name)
         category = Category.objects.filter(category='Initial Balance')
         print (category)
@@ -64,13 +69,13 @@ class CreateAccount(CreateView):
         print (initial_balance_transaction)
         return super().form_valid(form)
 
-class UpdateAccount(UpdateView):
+class UpdateAccount(LoginRequiredMixin,UpdateView):
      template_name = 'accounts/accounts_form.html'
      form_class = AccountForm
      success_url = reverse_lazy('accounts-index') 
      model = Account
 
-class DeleteAccount(DeleteView):
+class DeleteAccount(LoginRequiredMixin,DeleteView):
      template_name = 'accounts/accounts_delete.html'
      form_class = AccountForm
      success_url = reverse_lazy('accounts-index') 

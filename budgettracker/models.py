@@ -1,6 +1,8 @@
 from django.db import models
+from django.contrib.auth.models import User
 from categories.models import Category
 class BudgetTracker(models.Model):
+    user = models.ForeignKey(User,on_delete=models.CASCADE)
     date = models.DateField()
     category = models.ForeignKey(Category, on_delete=models.CASCADE)
     budget_amount = models.FloatField()

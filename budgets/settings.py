@@ -31,6 +31,7 @@ ALLOWED_HOSTS = []
 # Application definition
 
 INSTALLED_APPS = [
+    'users.apps.UsersConfig',
     'transfers.apps.TransfersConfig',
     'transactions.apps.TransactionsConfig',
     'accounts.apps.AccountsConfig',
@@ -128,3 +129,6 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/3.0/howto/static-files/
 
 STATIC_URL = '/static/'
+LOGIN_URL = '/users/login'
+LOGIN_REDIRECT_URL = '/accounts'
+LOGOUT_REDIRECT_URL = 'login'

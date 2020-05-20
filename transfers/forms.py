@@ -10,7 +10,7 @@ class TransferForm(forms.ModelForm):
 
     class Meta:
         model = Transfer
-        fields ='__all__'
+        exclude = ('user',)
         widgets = {
             'transfer_date': DatePickerInput(), # default date-format %m/%d/%Y will be used
         }

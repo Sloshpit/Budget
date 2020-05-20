@@ -17,7 +17,7 @@ class AccountForm(forms.ModelForm):
     class Meta:
         model = Account
 
-        fields ='__all__'
+        exclude =('user',)
         widgets = {
             'date': DatePickerInput(), # default date-format %m/%d/%Y will be used
         }

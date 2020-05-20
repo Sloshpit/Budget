@@ -2,8 +2,9 @@ from django.db import models
 from django.forms import ModelForm
 from categories.models import Category
 from accounts.models import Account, AccountBalance
-
+from django.contrib.auth.models import User
 class Transaction(models.Model):
+    user = models.ForeignKey(User, on_delete=models.CASCADE, default = 1) 
     store = models.CharField(max_length=200)
     description = models.CharField(max_length=200)
     amount = models.FloatField()
