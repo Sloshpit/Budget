@@ -7,7 +7,5 @@ urlpatterns = [
     path('add', BudgettrackerCreate.as_view(), name='budgetracker-add'),
     path('<int:pk>/update', BudgettrackerUpdate.as_view(), name='budgettracker-update'),
     path('<int:pk>/delete', BudgettrackerDelete.as_view(), name='budgettracker-delete'),
-
- 
-
+    path ('test',views.test, name='test'),
 ]

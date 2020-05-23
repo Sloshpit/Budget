@@ -6,6 +6,7 @@ from .models import Account, AccountBalance
 from django.db.models import Max
 from transfers.models import Transfer
 from transactions.models import Transaction
+from budgettracker.models import BudgetLeft
 from categories.models import Category
 from django.shortcuts import render
 from .forms import GetDateForm, AccountForm
@@ -26,13 +27,15 @@ def index(request):
     print ('in index')
     total_cash = 0
     template = loader.get_template ('accounts/index.html')
-    account_list = AccountBalance.objects.filter(account__user=request.user).values_list('account__account_name', flat=True).distinct()
+    print ('user')
+    print (request.user.id)
+    today = date.today()
+    account_list = Account.objects.filter(user=request.user).distinct()
+    print (account_list)
     latest_account = []
-    today = str(date.today())
-    print (today)
+
     for account in account_list:
-        latest_account.append(AccountBalance.objects.filter(account__account_name=account, balance_date__lte=today, account__user=request.user).values ('account__account_name', 'balance', 'balance_date').latest('balance_date'))
-    print (latest_account)
+        latest_account.append(AccountBalance.objects.filter(account__account_name=account.account_name, account__user=request.user, balance_date__lte=today).values ('account__account_name', 'balance', 'balance_date').latest('balance_date'))
 
     for account in latest_account:
         total_cash= account['balance'] + total_cash
@@ -59,13 +62,27 @@ class CreateAccount(LoginRequiredMixin,CreateView):
         balance_description = 'initial'
         form.instance.user = self.request.user
         self.object = form.save()
-        account_record = Account.objects.filter(account_name=account_name)
-        category = Category.objects.filter(category='Initial Balance')
+        account_record = Account.objects.filter(account_name=account_name, user=self.request.user.id)
+        print ('account record:')
+        print (account_record)
+        category = Category.objects.filter(category='Initial Balance', user=self.request.user.id)
         print (category)
         new_record = AccountBalance(account=account_record[0], balance_description = balance_description, balance=initial_balance, balance_date=date.date())        
         new_record.save() 
-        initial_balance_transaction = Transaction(store=account_name, description = balance_description, amount = initial_balance, trans_date = date.date(), category= category[0], account_name = account_record[0])
+        initial_balance_transaction = Transaction(user = self.request.user,store=account_name, description = balance_description, amount = initial_balance, trans_date = date.date(), category= category[0], account_name = account_record[0])
         initial_balance_transaction.save()
+        total_budget_left = 0
+#        budget_left = BudgetLeft.objects.filter(user = self.request.user).count()
+#        if budget_left > 0 :
+#            current_budget_left = BudgetLeft.objects.filter(user = self.request.user)
+#            for amount in current_budget_left:
+#                total_budget_left = float(amount['amount']) + total_budget_left
+#            bl = BudgetLeft.objects.get(user=self.request.user)
+#            bl.amount = total_budget_left
+#            bl.save(['amount']) 
+#        else:
+#            bl = BudgetLeft(user=self.request.user, amount = initial_balance)
+#            bl.save()
         print (initial_balance_transaction)
         return super().form_valid(form)
 

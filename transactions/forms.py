@@ -19,7 +19,11 @@ class CreateTransactionForm(forms.ModelForm):
         widgets = {
             'trans_date': DatePickerInput(format='%m/%d/%Y').start_of('transaction days'), # default date-format %m/%d/%Y will be used
         }
-
+    def __init__(self, *args, logged_user_id=None, **kwargs):
+       super().__init__(*args, **kwargs)
+       if logged_user_id is not None:
+           self.fields['category'].queryset = Category.objects.filter(user=logged_user_id)
+           self.fields['account_name'].queryset = Account.objects.filter(user=logged_user_id)        
     def clean_amount(self):
        for field, value in self.cleaned_data.items():
             amount = self.cleaned_data['amount']

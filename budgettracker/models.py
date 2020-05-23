@@ -14,3 +14,9 @@ class BudgetTracker(models.Model):
 
     def get_absolute_url(self):
         return reverse('budgettracker-index', args=[self.id])
+
+class BudgetLeft (models.Model):
+    user = models.ForeignKey(User, on_delete = models.CASCADE)
+    amount = models.FloatField()
+    def __str__(self):
+        return '%s  %s ' %(self.amount, self.user)

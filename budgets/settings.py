@@ -132,3 +132,14 @@ STATIC_URL = '/static/'
 LOGIN_URL = '/users/login'
 LOGIN_REDIRECT_URL = '/accounts'
 LOGOUT_REDIRECT_URL = 'login'
+
+EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
+EMAIL_HOST = 'smtp.gmail.com'
+EMAIL_USE_TLS = True
+EMAIL_PORT = 587
+EMAIL_HOST_USER = 'mypersonal.budgets99@gmail.com'
+EMAIL_HOST_PASSWORD = 'budgeting99!'
+DEFAULT_FROM_EMAIL = 'personal budgets'
+
+SESSION_EXPIRE_AT_BROWSER_CLOSE = False
+SESSION_COOKIE_AGE = 10 * 60

@@ -44,6 +44,10 @@ class TransactionCreate (LoginRequiredMixin, CreateView):
      form_class = CreateTransactionForm
      success_url = reverse_lazy('transaction-index') 
      model = Transaction
+     def get_form_kwargs(self):
+        kwargs = super().get_form_kwargs()
+        kwargs.update(logged_user_id=self.request.user.id)
+        return kwargs
 
      def form_valid(self, form):
         now = datetime.today()
@@ -58,21 +62,22 @@ class TransactionCreate (LoginRequiredMixin, CreateView):
         form.instance.user = self.request.user   
         user_id = self.request.user.id
         self.object = form.save()
-
+        print ('transaciton date...is it date-time?')
+        print (trans_date)
      #   bud_date = str(trans_date.year) +"-" +str(trans_date.month) + "-"+ "1"
         bud_date = get_first_of_month(trans_date)
         #create a category budget for a transaction if it does not exist
-        if not BudgetTracker.objects.filter(date=bud_date, user=self.object.user).exists():
+        if not BudgetTracker.objects.filter(date=bud_date, user=self.request.user).exists():
             print ('inside no category exists for transaction')
             bud_amount = amount
             if amount < 0:
                 bud_amount = bud_amount *-1
-            new_budget = BudgetTracker(category=category, budget_amount = bud_amount, monthly_spend = '0', date = bud_date, user=self.object.user)
+            new_budget = BudgetTracker(category=category, budget_amount = bud_amount, monthly_spend = '0', date = bud_date, user=self.request.user)
             new_budget.save()
         # get the latest account balance based on the transaction date.  This should account for a present record and going into the past.
 
         #latest_account = AccountBalance.objects.filter(account__account_name=acct_name).values('account__account_name', 'balance', 'balance_date').latest('balance_date')
-        latest_account = AccountBalance.objects.filter(account__account_name = acct_name, balance_date__lte=trans_date, account__user=self.object.user).values('account__account_name', 'balance', 'balance_date').order_by("-balance_date")[0]
+        latest_account = AccountBalance.objects.filter(account__account_name = acct_name, balance_date__lte=trans_date, account__user=self.request.user).values('account__account_name', 'balance', 'balance_date').order_by("-balance_date")[0]
         print (latest_account)
         print('--------latest acount----')
         latest_account_date = latest_account['balance_date']
@@ -83,10 +88,10 @@ class TransactionCreate (LoginRequiredMixin, CreateView):
             new_balance = latest_account['balance'] + amount
             print ('new balance:')
             print (new_balance)
-            update_account = AccountBalance.objects.filter(account__account_name = acct_name, balance_date__lte=trans_date, account__user=self.object.user).update(balance = new_balance)
+            update_account = AccountBalance.objects.filter(account__account_name = acct_name, balance_date__lte=trans_date, account__user=self.request.user).update(balance = new_balance)
             print ('update')
             print (update_account)
-            records_to_update = AccountBalance.objects.filter(account__account_name=acct_name, account__user=user_id, balance_date__gt=trans_date, balance_date__lte = now.date())
+            records_to_update = AccountBalance.objects.filter(account__account_name=acct_name, account__user=self.request.user, balance_date__gt=trans_date, balance_date__lte = now.date())
             print ('records to update:')
             print (records_to_update)
         #update all potential future record balances
@@ -100,7 +105,7 @@ class TransactionCreate (LoginRequiredMixin, CreateView):
             new_account_balance=amount + float(latest_account['balance'])        
             new_record = AccountBalance(account=acct_name, balance_description = balance_description, balance=new_account_balance, balance_date=trans_date)
             new_record.save()
-            records_to_update = AccountBalance.objects.filter(account__account_name=acct_name, account__user=self.object.user,balance_date__gt=trans_date, balance_date__lte = now.date())
+            records_to_update = AccountBalance.objects.filter(account__account_name=acct_name, account__user=self.request.user,balance_date__gt=trans_date, balance_date__lte = now.date())
             print (records_to_update)
         #update any potential future records
             for record in records_to_update:
@@ -112,10 +117,10 @@ class TransactionCreate (LoginRequiredMixin, CreateView):
 
         next_first_of_month = get_first_of_next_month(trans_date)
  #get all transactions for this month, get the budget for the category, do the math on that category
-        transaction_spend = Transaction.objects.filter(category__category = category, trans_date__range = [first_of_month, trans_date], user=self.object.user).aggregate(sum=Sum('amount'))['sum'] or 0.00
+        transaction_spend = Transaction.objects.filter(category__category = category, trans_date__range = [first_of_month, trans_date], user=self.request.user).aggregate(sum=Sum('amount'))['sum'] or 0.00
         print ('transaction spend so far:')
         print (transaction_spend)
-        category_budget = BudgetTracker.objects.filter(category__category = category, date__range = [first_of_month, trans_date], user=self.object.user)
+        category_budget = BudgetTracker.objects.filter(category__category = category, date__range = [first_of_month, trans_date], user=self.request.user)
 
         #category_spend = budget_amount - transaction_spend
         print ('cagegory_budget no user')
@@ -126,13 +131,13 @@ class TransactionCreate (LoginRequiredMixin, CreateView):
              spend.monthly_spend = transaction_spend
              print (spend.monthly_spend)
              spend.save()
-        category_budget = BudgetTracker.objects.filter(category__category = category, date = next_first_of_month, user=self.object.user)
-        print ('category_budget next month:')
-        print (category_budget)
-        for budget in category_budget:
-            print (budget.budget_amount)
-            budget.budget_amount =  budget.budget_amount + transaction_spend
-            budget.save()               
+       # category_budget = BudgetTracker.objects.filter(category__category = category, date = next_first_of_month, user=self.request.user)
+       # print ('category_budget next month:')
+       # print (category_budget)
+       # for budget in category_budget:
+       #     print (budget.budget_amount)
+       #     budget.budget_amount =  budget.budget_amount + transaction_spend
+       #     budget.save()               
         return super().form_valid(form)
 
     #fields = '__all__'
@@ -161,17 +166,16 @@ class TransactionUpdate (LoginRequiredMixin, UpdateView):
         trans_date = form.cleaned_data['trans_date']
         self.object = form.save()
 
-        balance_records = AccountBalance.objects.filter(account__account_name=acct_name, balance_date__range = [trans_date, today], user=self.user.object )
+        balance_records = AccountBalance.objects.filter(account__account_name=acct_name, balance_date__range = [trans_date, today], user=self.request.user )
         for record in balance_records:
             record.balance = record.balance + amount_difference
             record.save()
    #get all transactions for this month, get the budget for the category, do the math on that category      
         first_of_month = get_first_of_month(trans_date)
         next_first_of_month = get_first_of_next_month(trans_date)
-        transaction_spend = Transaction.objects.filter(category__category = category, trans_date__range = [first_of_month, trans_date], user=self.user.object).aggregate(sum=Sum('amount'))['sum'] or 0.00
-
-        category_budget = BudgetTracker.objects.filter(category__category = category, date__range = [first_of_month, trans_date], user=self.user.object)
-        category_budget_next_month = BudgetTracker.objects.filter(category__category = category, date = next_first_of_month, user=self.user.object)
+        transaction_spend = Transaction.objects.filter(category__category = category, trans_date__range = [first_of_month, trans_date], user=self.request.user).aggregate(sum=Sum('amount'))['sum'] or 0.00
+        category_budget = BudgetTracker.objects.filter(category__category = category, date__range = [first_of_month, trans_date], user=self.request.user)
+        category_budget_next_month = BudgetTracker.objects.filter(category__category = category, date = next_first_of_month, user=self.request.user)
 
         #category_spend = budget_amount - transaction_spend
   
@@ -212,18 +216,23 @@ class TransactionDelete (LoginRequiredMixin, DeleteView):
         category = self.object.category
         print ('user!!')
         user = self.object.user
-        account_record_to_delete = AccountBalance.objects.filter(balance_date=trans_date, account=acct_name).delete()
-        records_to_update = AccountBalance.objects.filter(account=acct_name, balance_date__gte=trans_date, balance_date__lte = today)
+        print (user)
+ #   account_record_to_delete = AccountBalance.objects.filter(account__user=user,balance_date=trans_date, account=acct_name).delete()
+        records_to_update = AccountBalance.objects.filter(account__user=user, account=acct_name, balance_date__gte=trans_date, balance_date__lte = today)
+        print ('records to update')
+        print (records_to_update)
         for record in records_to_update:
             record.balance = record.balance - amount
+            print (amount)
+            print (record.balance)
             record.save()
    #get all transactions for this month, get the budget for the category, do the math on that category      
         first_of_month = get_first_of_month(trans_date)
         next_first_of_month = get_first_of_next_month(trans_date)
-        transaction_spend = Transaction.objects.filter(category__category = category, trans_date__range = [first_of_month, trans_date], user=user).aggregate(sum=Sum('amount'))['sum'] or 0.00
+        transaction_spend = Transaction.objects.filter(user=user, category__category = category, trans_date__range = [first_of_month, trans_date]).aggregate(sum=Sum('amount'))['sum'] or 0.00
 
-        category_budget = BudgetTracker.objects.filter(category__category = category, date__range = [first_of_month, trans_date], user=user)
-        category_budget_next_month = BudgetTracker.objects.filter(category__category = category, date = next_first_of_month, user=user)
+        category_budget = BudgetTracker.objects.filter(user=user, category__category = category, date__range = [first_of_month, trans_date])
+        category_budget_next_month = BudgetTracker.objects.filter(user=user,category__category = category, date = next_first_of_month)
 
         #category_spend = budget_amount - transaction_spend
   

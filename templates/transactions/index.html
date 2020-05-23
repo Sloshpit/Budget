@@ -14,12 +14,16 @@
 <tr>
 <th scope="col">Store</th>
 <th scope="col">Category</th>
-<th scope="col">Description</th>
+<th scope="col">Category ID</th>
+<th scope="col">Category Name</th>
 <th scope="col">Amount</th>
 <th scope="col">Transaction Date</th>
 <th scope="col">Account</th>
-<th scope="col">Manage</th>
+<th scope="col">User</th>
+<th scope="col">Mange</th>
+
 </thead>
+
 <tbody>
 {% if show_transactions %}
     {% for transaction in show_transactions %}
@@ -31,6 +35,8 @@
         <td>${{ transaction.amount | floatformat:2 }}</td>
         <td>{{ transaction.trans_date }}</td>
         <td>{{ transaction.account_name }}</td>
+        <td>{{ transaction.user }}</td>
+
         <td> <a class = "btn btn-danger" href="{%url "transaction-delete" transaction.id%}">Delete</a> <a class = "btn btn-warning" href="{%url "transaction-update" transaction.id%}">Update</a></td>
        </tr>
     {% endfor %}
