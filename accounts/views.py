@@ -6,7 +6,6 @@ from .models import Account, AccountBalance
 from django.db.models import Max
 from transfers.models import Transfer
 from transactions.models import Transaction
-from budgettracker.models import BudgetLeft
 from categories.models import Category
 from django.shortcuts import render
 from .forms import GetDateForm, AccountForm
@@ -72,17 +71,7 @@ class CreateAccount(LoginRequiredMixin,CreateView):
         initial_balance_transaction = Transaction(user = self.request.user,store=account_name, description = balance_description, amount = initial_balance, trans_date = date.date(), category= category[0], account_name = account_record[0])
         initial_balance_transaction.save()
         total_budget_left = 0
-#        budget_left = BudgetLeft.objects.filter(user = self.request.user).count()
-#        if budget_left > 0 :
-#            current_budget_left = BudgetLeft.objects.filter(user = self.request.user)
-#            for amount in current_budget_left:
-#                total_budget_left = float(amount['amount']) + total_budget_left
-#            bl = BudgetLeft.objects.get(user=self.request.user)
-#            bl.amount = total_budget_left
-#            bl.save(['amount']) 
-#        else:
-#            bl = BudgetLeft(user=self.request.user, amount = initial_balance)
-#            bl.save()
+
         print (initial_balance_transaction)
         return super().form_valid(form)
 

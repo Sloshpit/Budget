@@ -131,13 +131,13 @@ class TransactionCreate (LoginRequiredMixin, CreateView):
              spend.monthly_spend = transaction_spend
              print (spend.monthly_spend)
              spend.save()
-       # category_budget = BudgetTracker.objects.filter(category__category = category, date = next_first_of_month, user=self.request.user)
-       # print ('category_budget next month:')
-       # print (category_budget)
-       # for budget in category_budget:
-       #     print (budget.budget_amount)
-       #     budget.budget_amount =  budget.budget_amount + transaction_spend
-       #     budget.save()               
+        category_budget = BudgetTracker.objects.filter(category__category = category, date = next_first_of_month, user=self.request.user)
+        print ('category_budget next month:')
+        print (category_budget)
+        for budget in category_budget:
+            print (budget.budget_amount)
+            budget.budget_amount =  budget.budget_amount + transaction_spend
+            budget.save()               
         return super().form_valid(form)
 
     #fields = '__all__'
@@ -162,11 +162,14 @@ class TransactionUpdate (LoginRequiredMixin, UpdateView):
         category = form.cleaned_data ['category']
         acct_name = form.cleaned_data['account_name']
         amount = form.cleaned_data['amount']
+        if amount < 0:
+            amount = amount *-1        
         amount_difference = amount - self.object.amount
         trans_date = form.cleaned_data['trans_date']
         self.object = form.save()
 
-        balance_records = AccountBalance.objects.filter(account__account_name=acct_name, balance_date__range = [trans_date, today], user=self.request.user )
+
+        balance_records = AccountBalance.objects.filter(account__account_name=acct_name, balance_date__range = [trans_date, today], account__user=self.request.user )
         for record in balance_records:
             record.balance = record.balance + amount_difference
             record.save()
