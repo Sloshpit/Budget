@@ -154,7 +154,11 @@ class TransactionUpdate (LoginRequiredMixin, UpdateView):
     #get all the transactions from that date to present date (today)
     #perform calculation on the updated balance for each
     #write the balance to the db, along with any other changes.
-
+    def get_form_kwargs(self):
+        kwargs = super().get_form_kwargs()
+        kwargs.update(logged_user_id=self.request.user.id)
+        return kwargs
+        
     def form_valid(self, form):
         self.object = self.get_object()
         today = datetime.today()

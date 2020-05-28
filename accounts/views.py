@@ -35,7 +35,7 @@ def index(request):
 
     for account in account_list:
         latest_account.append(AccountBalance.objects.filter(account__account_name=account.account_name, account__user=request.user, balance_date__lte=today).values ('account__account_name', 'balance', 'balance_date').latest('balance_date'))
-
+        print(latest_account)
     for account in latest_account:
         total_cash= account['balance'] + total_cash
     

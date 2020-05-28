@@ -48,6 +48,7 @@
 <th scope="col">Category</th>
 <th scope="col">Monthly Budget</th>
 <th scope="col">Monthly Spend</th>
+<th scope="col">Remaining Budget </th>
 <th scope="col">Actions</th>
 </thead>
 <tbody>
@@ -58,6 +59,7 @@
         <td>{{ budget.category }}</td>
         <td>${{ budget.budget_amount | floatformat:2 }}</td>
         <td>${{ budget.monthly_spend | floatformat:2 }}</td>
+        <td>${{ budget.total_left | floatformat:2 }}
         <td> <a class = "btn btn-warning" href="{%url "budgettracker-update" budget.id%}">Update</a> <a class = "btn btn-danger" href="{%url "budgettracker-delete" budget.id%}">Delete</a></td>
 
        </tr>

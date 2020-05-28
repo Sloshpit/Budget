@@ -69,6 +69,13 @@ class UpdateTransactionForm(forms.ModelForm):
             'trans_date': DatePickerInput(), # default date-format %m/%d/%Y will be used
         }
 
+
+    def __init__(self, *args, logged_user_id=None, **kwargs):
+       super().__init__(*args, **kwargs)
+       if logged_user_id is not None:
+           self.fields['category'].queryset = Category.objects.filter(user=logged_user_id)
+           self.fields['account_name'].queryset = Account.objects.filter(user=logged_user_id)        
+
     def clean_trans_date(self):
         trans_date = self.cleaned_data['trans_date']
         return trans_date

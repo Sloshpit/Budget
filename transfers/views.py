@@ -29,6 +29,10 @@ class CreateTransfer(LoginRequiredMixin, CreateView):
     template_name = 'transfers/transfer_form.html'
     success_url = reverse_lazy('transfers-index')  
     form_class = TransferForm
+    def get_form_kwargs(self):
+        kwargs = super().get_form_kwargs()
+        kwargs.update(logged_user_id=self.request.user.id)
+        return kwargs
 
     def form_valid(self, form):
 
@@ -52,8 +56,8 @@ class CreateTransfer(LoginRequiredMixin, CreateView):
              outgoing_account_balance=latest_outgoing_account['balance']
              new_incoming_balance=transfer_amount + float(incoming_account_balance)
              new_outgoing_balance=float(outgoing_account_balance) - transfer_amount
-             new_incoming_record = AccountBalance(account=incoming_account, balance_description = balance_description, balance=new_incoming_balance, balance_date=transfer_date)
-             new_outgoing_record = AccountBalance(account=outgoing_account, balance_description = balance_description, balance=new_outgoing_balance, balance_date=transfer_date)
+             new_incoming_record = AccountBalance(account=incoming_account, account__user= self.request.user, balance_description = balance_description, balance=new_incoming_balance, balance_date=transfer_date)
+             new_outgoing_record = AccountBalance(account=outgoing_account, account_user = self.request.user, balance_description = balance_description, balance=new_outgoing_balance, balance_date=transfer_date)
              new_incoming_record.save()
              new_outgoing_record.save()
         else:
@@ -97,7 +101,10 @@ class UpdateTransfer (LoginRequiredMixin, UpdateView):
     form_class = TransferForm
     success_url = reverse_lazy('transfers-index') 
     model = Transfer
-
+    def get_form_kwargs(self):
+        kwargs = super().get_form_kwargs()
+        kwargs.update(logged_user_id=self.request.user.id)
+        return kwargs
 
     def form_valid(self, form):
         self.object = self.get_object()
@@ -152,11 +159,11 @@ class DeleteTransfer (LoginRequiredMixin, DeleteView):
         incoming_account = self.object.incoming_account
         outgoing_account = self.object.outgoing_account
 
-        incoming_account_record_to_delete = AccountBalance.objects.filter(balance_date=transfer_date, user = self.request.user, account=incoming_account).delete()
-        outgoing_account_record_to_delete = AccountBalance.objects.filter(balance_date=transfer_date, user=self.request.user, account=outgoing_account).delete()
+        incoming_account_record_to_delete = AccountBalance.objects.filter(balance_date=transfer_date, account__user=self.request.user, account=incoming_account).delete()
+        outgoing_account_record_to_delete = AccountBalance.objects.filter(balance_date=transfer_date, account__user=self.request.user, account=outgoing_account).delete()
 
-        incoming_records_to_update = AccountBalance.objects.filter(balance_date__gte=transfer_date, balance_date__lte = today, user=self.request.user, account=incoming_account)
-        outgoing_records_to_update = AccountBalance.objects.filter(balance_date__gte=transfer_date, balance_date__lte = today, user=self.request.user, account=outgoing_account)
+        incoming_records_to_update = AccountBalance.objects.filter(balance_date__gte=transfer_date, balance_date__lte = today, account__user=self.request.user, account=incoming_account)
+        outgoing_records_to_update = AccountBalance.objects.filter(balance_date__gte=transfer_date, balance_date__lte = today, account__user=self.request.user, account=outgoing_account)
 
 
         for record in incoming_records_to_update:

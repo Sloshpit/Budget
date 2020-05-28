@@ -8,12 +8,13 @@
 <div class="container">
       <div class="row justify-content-center">
         <div class="col-8">
-          <h1 class="mt-2">Create your Monthly Budget - Add a Budget</h1>
+          <h1 class="mt-2">Add an Item to your Budget</h1>
   <form method="post">
     {% csrf_token %}
     {{ form|crispy }}
     <div class="mt-2"></div>
-    <div id="last_month_budget"></div>
+      <div id="average_budget"></div>   
+      <div class="row mt-3"></div> 
     <button type="submit" class="btn btn-primary">Submit</button>
   </form>
 
@@ -25,7 +26,7 @@
          thedate = $(this).val();
        });
 
-    $("#id_category").change(function()  {
+  /*  $("#id_category").change(function()  {
      category = $(this).val();
        
       $.ajax({
@@ -43,7 +44,31 @@
         }
       });
 
-    });
+    });*/
+
+      $('#id_category').change(function(){
+       var category = $(this).find('option:selected').text();
+       var date = $('#id_date').val();
+       $.ajax({
+         url: 'ajax/get_budget_average',
+         data:{
+           'category': category,
+           'date': date
+         },
+         dataType:'json',
+         success: function (data){
+        
+         var averagespend =  (data['category_average_spend']['monthly_spend__avg']);
+         var averagebudget = (data['category_average_budget']['budget_amount__avg'])
+         var avgspend = averagespend.toFixed(2);    
+         var avgbudget = averagebudget.toFixed(2);   
+         console.log (data) 
+        $('#average_budget').append('<div class="alert alert-success">' + 'Over the last 3 months you have spent $<strong>'+avgspend+ '</strong> on the '+ category + ' category. Your average budget over the last 3 months has been <strong>$' + avgbudget +'</strong>.</div>')
+       //  $('#average_budget').text('Over the last 3 months you have spent $' + avgspend + ' on this category.' + ' Your avarage budget for this category is $' +avgbudget )
+ 
+         }
+       });    
+       });
   </script>
 
 {% endblock %}

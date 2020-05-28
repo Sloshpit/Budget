@@ -29,6 +29,11 @@ class CreateCategory(LoginRequiredMixin, CreateView):
      form_class = CategoryForm
      success_url = reverse_lazy('categories-index') 
      model = Category
+     def get_form_kwargs(self):
+        kwargs = super().get_form_kwargs()
+        kwargs.update(user = self.request.user.id)
+        return kwargs
+
      def form_valid(self, form):
         category = form.cleaned_data ['category']
         master_category = form.cleaned_data['master_category']
@@ -42,6 +47,11 @@ class UpdateCategory(LoginRequiredMixin, UpdateView):
      form_class = CategoryForm
      success_url = reverse_lazy('categories-index') 
      model = Category
+     def get_form_kwargs(self):
+        kwargs = super().get_form_kwargs()
+        kwargs.update(user = self.request.user.id)
+        return kwargs
+
 
 class DeleteCategory(LoginRequiredMixin, DeleteView):
      template_name = 'categories/categories_delete.html'
