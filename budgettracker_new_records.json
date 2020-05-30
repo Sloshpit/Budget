@@ -1,0 +1,1340 @@
+[
+{
+  "model": "budgettracker.budgettracker",
+  "pk": 3,
+  "fields": {
+    "user": 1,
+    "date": "2020-05-01",
+    "category": 3,
+    "budget_amount": 6000.0,
+    "monthly_spend": -207.57
+  }
+},
+{
+  "model": "budgettracker.budgettracker",
+  "pk": 4,
+  "fields": {
+    "user": 1,
+    "date": "2020-06-01",
+    "category": 3,
+    "budget_amount": 3563.01,
+    "monthly_spend": -207.57
+  }
+},
+{
+  "model": "budgettracker.budgettracker",
+  "pk": 5,
+  "fields": {
+    "user": 1,
+    "date": "2020-05-01",
+    "category": 4,
+    "budget_amount": 525.0,
+    "monthly_spend": -207.57
+  }
+},
+{
+  "model": "budgettracker.budgettracker",
+  "pk": 6,
+  "fields": {
+    "user": 1,
+    "date": "2020-06-01",
+    "category": 4,
+    "budget_amount": 525.0,
+    "monthly_spend": -207.57
+  }
+},
+{
+  "model": "budgettracker.budgettracker",
+  "pk": 7,
+  "fields": {
+    "user": 1,
+    "date": "2020-05-01",
+    "category": 5,
+    "budget_amount": 80.0,
+    "monthly_spend": -207.57
+  }
+},
+{
+  "model": "budgettracker.budgettracker",
+  "pk": 8,
+  "fields": {
+    "user": 1,
+    "date": "2020-06-01",
+    "category": 5,
+    "budget_amount": 80.0,
+    "monthly_spend": -207.57
+  }
+},
+{
+  "model": "budgettracker.budgettracker",
+  "pk": 9,
+  "fields": {
+    "user": 1,
+    "date": "2020-05-01",
+    "category": 6,
+    "budget_amount": 100.0,
+    "monthly_spend": -207.57
+  }
+},
+{
+  "model": "budgettracker.budgettracker",
+  "pk": 10,
+  "fields": {
+    "user": 1,
+    "date": "2020-06-01",
+    "category": 6,
+    "budget_amount": 100.0,
+    "monthly_spend": -207.57
+  }
+},
+{
+  "model": "budgettracker.budgettracker",
+  "pk": 11,
+  "fields": {
+    "user": 1,
+    "date": "2020-05-01",
+    "category": 7,
+    "budget_amount": 476.67,
+    "monthly_spend": -207.57
+  }
+},
+{
+  "model": "budgettracker.budgettracker",
+  "pk": 12,
+  "fields": {
+    "user": 1,
+    "date": "2020-06-01",
+    "category": 7,
+    "budget_amount": 476.67,
+    "monthly_spend": -207.57
+  }
+},
+{
+  "model": "budgettracker.budgettracker",
+  "pk": 13,
+  "fields": {
+    "user": 1,
+    "date": "2020-05-01",
+    "category": 8,
+    "budget_amount": 700.0,
+    "monthly_spend": -207.57
+  }
+},
+{
+  "model": "budgettracker.budgettracker",
+  "pk": 14,
+  "fields": {
+    "user": 1,
+    "date": "2020-06-01",
+    "category": 8,
+    "budget_amount": 629.81,
+    "monthly_spend": -207.57
+  }
+},
+{
+  "model": "budgettracker.budgettracker",
+  "pk": 15,
+  "fields": {
+    "user": 1,
+    "date": "2020-05-01",
+    "category": 9,
+    "budget_amount": 400.0,
+    "monthly_spend": -207.57
+  }
+},
+{
+  "model": "budgettracker.budgettracker",
+  "pk": 16,
+  "fields": {
+    "user": 1,
+    "date": "2020-06-01",
+    "category": 9,
+    "budget_amount": 400.0,
+    "monthly_spend": -207.57
+  }
+},
+{
+  "model": "budgettracker.budgettracker",
+  "pk": 17,
+  "fields": {
+    "user": 1,
+    "date": "2020-05-01",
+    "category": 10,
+    "budget_amount": 148.44,
+    "monthly_spend": -207.57
+  }
+},
+{
+  "model": "budgettracker.budgettracker",
+  "pk": 18,
+  "fields": {
+    "user": 1,
+    "date": "2020-06-01",
+    "category": 10,
+    "budget_amount": 62.67999999999999,
+    "monthly_spend": -207.57
+  }
+},
+{
+  "model": "budgettracker.budgettracker",
+  "pk": 19,
+  "fields": {
+    "user": 1,
+    "date": "2020-05-01",
+    "category": 11,
+    "budget_amount": 250.0,
+    "monthly_spend": -207.57
+  }
+},
+{
+  "model": "budgettracker.budgettracker",
+  "pk": 20,
+  "fields": {
+    "user": 1,
+    "date": "2020-06-01",
+    "category": 11,
+    "budget_amount": 193.95,
+    "monthly_spend": -207.57
+  }
+},
+{
+  "model": "budgettracker.budgettracker",
+  "pk": 21,
+  "fields": {
+    "user": 1,
+    "date": "2020-05-01",
+    "category": 12,
+    "budget_amount": 100.0,
+    "monthly_spend": -207.57
+  }
+},
+{
+  "model": "budgettracker.budgettracker",
+  "pk": 22,
+  "fields": {
+    "user": 1,
+    "date": "2020-06-01",
+    "category": 12,
+    "budget_amount": 100.0,
+    "monthly_spend": -207.57
+  }
+},
+{
+  "model": "budgettracker.budgettracker",
+  "pk": 23,
+  "fields": {
+    "user": 1,
+    "date": "2020-05-01",
+    "category": 13,
+    "budget_amount": 39.55,
+    "monthly_spend": -207.57
+  }
+},
+{
+  "model": "budgettracker.budgettracker",
+  "pk": 24,
+  "fields": {
+    "user": 1,
+    "date": "2020-06-01",
+    "category": 13,
+    "budget_amount": 39.55,
+    "monthly_spend": -207.57
+  }
+},
+{
+  "model": "budgettracker.budgettracker",
+  "pk": 25,
+  "fields": {
+    "user": 1,
+    "date": "2020-05-01",
+    "category": 14,
+    "budget_amount": 200.0,
+    "monthly_spend": -209.57
+  }
+},
+{
+  "model": "budgettracker.budgettracker",
+  "pk": 26,
+  "fields": {
+    "user": 1,
+    "date": "2020-06-01",
+    "category": 14,
+    "budget_amount": -428.71,
+    "monthly_spend": -209.57
+  }
+},
+{
+  "model": "budgettracker.budgettracker",
+  "pk": 27,
+  "fields": {
+    "user": 1,
+    "date": "2020-05-01",
+    "category": 15,
+    "budget_amount": 1000.0,
+    "monthly_spend": -207.57
+  }
+},
+{
+  "model": "budgettracker.budgettracker",
+  "pk": 28,
+  "fields": {
+    "user": 1,
+    "date": "2020-06-01",
+    "category": 15,
+    "budget_amount": 1000.0,
+    "monthly_spend": -207.57
+  }
+},
+{
+  "model": "budgettracker.budgettracker",
+  "pk": 29,
+  "fields": {
+    "user": 1,
+    "date": "2020-05-01",
+    "category": 16,
+    "budget_amount": 104.5,
+    "monthly_spend": -207.57
+  }
+},
+{
+  "model": "budgettracker.budgettracker",
+  "pk": 30,
+  "fields": {
+    "user": 1,
+    "date": "2020-06-01",
+    "category": 16,
+    "budget_amount": 104.5,
+    "monthly_spend": -207.57
+  }
+},
+{
+  "model": "budgettracker.budgettracker",
+  "pk": 31,
+  "fields": {
+    "user": 1,
+    "date": "2020-05-01",
+    "category": 17,
+    "budget_amount": 400.0,
+    "monthly_spend": -207.57
+  }
+},
+{
+  "model": "budgettracker.budgettracker",
+  "pk": 32,
+  "fields": {
+    "user": 1,
+    "date": "2020-06-01",
+    "category": 17,
+    "budget_amount": 400.0,
+    "monthly_spend": -207.57
+  }
+},
+{
+  "model": "budgettracker.budgettracker",
+  "pk": 33,
+  "fields": {
+    "user": 1,
+    "date": "2020-05-01",
+    "category": 18,
+    "budget_amount": 400.0,
+    "monthly_spend": -207.57
+  }
+},
+{
+  "model": "budgettracker.budgettracker",
+  "pk": 34,
+  "fields": {
+    "user": 1,
+    "date": "2020-06-01",
+    "category": 18,
+    "budget_amount": 400.0,
+    "monthly_spend": -207.57
+  }
+},
+{
+  "model": "budgettracker.budgettracker",
+  "pk": 35,
+  "fields": {
+    "user": 1,
+    "date": "2020-05-01",
+    "category": 19,
+    "budget_amount": 300.0,
+    "monthly_spend": -207.57
+  }
+},
+{
+  "model": "budgettracker.budgettracker",
+  "pk": 36,
+  "fields": {
+    "user": 1,
+    "date": "2020-06-01",
+    "category": 19,
+    "budget_amount": 300.0,
+    "monthly_spend": -207.57
+  }
+},
+{
+  "model": "budgettracker.budgettracker",
+  "pk": 37,
+  "fields": {
+    "user": 1,
+    "date": "2020-05-01",
+    "category": 20,
+    "budget_amount": 125.0,
+    "monthly_spend": -207.57
+  }
+},
+{
+  "model": "budgettracker.budgettracker",
+  "pk": 38,
+  "fields": {
+    "user": 1,
+    "date": "2020-06-01",
+    "category": 20,
+    "budget_amount": 125.0,
+    "monthly_spend": -207.57
+  }
+},
+{
+  "model": "budgettracker.budgettracker",
+  "pk": 39,
+  "fields": {
+    "user": 1,
+    "date": "2020-05-01",
+    "category": 21,
+    "budget_amount": 45.14,
+    "monthly_spend": -207.57
+  }
+},
+{
+  "model": "budgettracker.budgettracker",
+  "pk": 40,
+  "fields": {
+    "user": 1,
+    "date": "2020-06-01",
+    "category": 21,
+    "budget_amount": 45.14,
+    "monthly_spend": -207.57
+  }
+},
+{
+  "model": "budgettracker.budgettracker",
+  "pk": 41,
+  "fields": {
+    "user": 1,
+    "date": "2020-05-01",
+    "category": 22,
+    "budget_amount": 275.0,
+    "monthly_spend": -207.57
+  }
+},
+{
+  "model": "budgettracker.budgettracker",
+  "pk": 42,
+  "fields": {
+    "user": 1,
+    "date": "2020-06-01",
+    "category": 22,
+    "budget_amount": 275.0,
+    "monthly_spend": -207.57
+  }
+},
+{
+  "model": "budgettracker.budgettracker",
+  "pk": 43,
+  "fields": {
+    "user": 1,
+    "date": "2020-05-01",
+    "category": 23,
+    "budget_amount": 125.0,
+    "monthly_spend": -207.57
+  }
+},
+{
+  "model": "budgettracker.budgettracker",
+  "pk": 44,
+  "fields": {
+    "user": 1,
+    "date": "2020-06-01",
+    "category": 23,
+    "budget_amount": 75.03,
+    "monthly_spend": -207.57
+  }
+},
+{
+  "model": "budgettracker.budgettracker",
+  "pk": 45,
+  "fields": {
+    "user": 1,
+    "date": "2020-05-01",
+    "category": 24,
+    "budget_amount": 112.0,
+    "monthly_spend": -207.57
+  }
+},
+{
+  "model": "budgettracker.budgettracker",
+  "pk": 46,
+  "fields": {
+    "user": 1,
+    "date": "2020-06-01",
+    "category": 24,
+    "budget_amount": 112.0,
+    "monthly_spend": -207.57
+  }
+},
+{
+  "model": "budgettracker.budgettracker",
+  "pk": 47,
+  "fields": {
+    "user": 1,
+    "date": "2020-05-01",
+    "category": 25,
+    "budget_amount": 100.0,
+    "monthly_spend": -207.57
+  }
+},
+{
+  "model": "budgettracker.budgettracker",
+  "pk": 48,
+  "fields": {
+    "user": 1,
+    "date": "2020-06-01",
+    "category": 25,
+    "budget_amount": 65.0,
+    "monthly_spend": -207.57
+  }
+},
+{
+  "model": "budgettracker.budgettracker",
+  "pk": 49,
+  "fields": {
+    "user": 1,
+    "date": "2020-05-01",
+    "category": 26,
+    "budget_amount": 75.0,
+    "monthly_spend": -207.57
+  }
+},
+{
+  "model": "budgettracker.budgettracker",
+  "pk": 50,
+  "fields": {
+    "user": 1,
+    "date": "2020-06-01",
+    "category": 26,
+    "budget_amount": 75.0,
+    "monthly_spend": -207.57
+  }
+},
+{
+  "model": "budgettracker.budgettracker",
+  "pk": 51,
+  "fields": {
+    "user": 1,
+    "date": "2020-05-01",
+    "category": 27,
+    "budget_amount": 75.0,
+    "monthly_spend": -207.57
+  }
+},
+{
+  "model": "budgettracker.budgettracker",
+  "pk": 52,
+  "fields": {
+    "user": 1,
+    "date": "2020-06-01",
+    "category": 27,
+    "budget_amount": 75.0,
+    "monthly_spend": -207.57
+  }
+},
+{
+  "model": "budgettracker.budgettracker",
+  "pk": 53,
+  "fields": {
+    "user": 1,
+    "date": "2020-05-01",
+    "category": 28,
+    "budget_amount": 201.0,
+    "monthly_spend": -207.57
+  }
+},
+{
+  "model": "budgettracker.budgettracker",
+  "pk": 54,
+  "fields": {
+    "user": 1,
+    "date": "2020-06-01",
+    "category": 28,
+    "budget_amount": 401.0,
+    "monthly_spend": -207.57
+  }
+},
+{
+  "model": "budgettracker.budgettracker",
+  "pk": 55,
+  "fields": {
+    "user": 1,
+    "date": "2020-05-01",
+    "category": 29,
+    "budget_amount": 35.21,
+    "monthly_spend": -207.57
+  }
+},
+{
+  "model": "budgettracker.budgettracker",
+  "pk": 56,
+  "fields": {
+    "user": 1,
+    "date": "2020-06-01",
+    "category": 29,
+    "budget_amount": 35.21,
+    "monthly_spend": -207.57
+  }
+},
+{
+  "model": "budgettracker.budgettracker",
+  "pk": 57,
+  "fields": {
+    "user": 1,
+    "date": "2020-05-01",
+    "category": 30,
+    "budget_amount": 4672.0,
+    "monthly_spend": -207.57
+  }
+},
+{
+  "model": "budgettracker.budgettracker",
+  "pk": 58,
+  "fields": {
+    "user": 1,
+    "date": "2020-06-01",
+    "category": 30,
+    "budget_amount": 4672.0,
+    "monthly_spend": -207.57
+  }
+},
+{
+  "model": "budgettracker.budgettracker",
+  "pk": 59,
+  "fields": {
+    "user": 1,
+    "date": "2020-05-01",
+    "category": 31,
+    "budget_amount": 5000.29,
+    "monthly_spend": -207.57
+  }
+},
+{
+  "model": "budgettracker.budgettracker",
+  "pk": 60,
+  "fields": {
+    "user": 1,
+    "date": "2020-06-01",
+    "category": 31,
+    "budget_amount": 5000.29,
+    "monthly_spend": -207.57
+  }
+},
+{
+  "model": "budgettracker.budgettracker",
+  "pk": 69,
+  "fields": {
+    "user": 33,
+    "date": "2020-05-01",
+    "category": 43,
+    "budget_amount": 8000.0,
+    "monthly_spend": -404.0
+  }
+},
+{
+  "model": "budgettracker.budgettracker",
+  "pk": 70,
+  "fields": {
+    "user": 33,
+    "date": "2020-06-01",
+    "category": 43,
+    "budget_amount": 7596.0,
+    "monthly_spend": 0.0
+  }
+},
+{
+  "model": "budgettracker.budgettracker",
+  "pk": 75,
+  "fields": {
+    "user": 34,
+    "date": "2020-05-01",
+    "category": 51,
+    "budget_amount": 500.0,
+    "monthly_spend": 0.0
+  }
+},
+{
+  "model": "budgettracker.budgettracker",
+  "pk": 77,
+  "fields": {
+    "user": 34,
+    "date": "2020-06-01",
+    "category": 51,
+    "budget_amount": 350.0,
+    "monthly_spend": 0.0
+  }
+},
+{
+  "model": "budgettracker.budgettracker",
+  "pk": 94,
+  "fields": {
+    "user": 34,
+    "date": "2020-05-01",
+    "category": 77,
+    "budget_amount": 8000.0,
+    "monthly_spend": 0.0
+  }
+},
+{
+  "model": "budgettracker.budgettracker",
+  "pk": 95,
+  "fields": {
+    "user": 34,
+    "date": "2020-06-01",
+    "category": 77,
+    "budget_amount": 5000.0,
+    "monthly_spend": 0.0
+  }
+},
+{
+  "model": "budgettracker.budgettracker",
+  "pk": 96,
+  "fields": {
+    "user": 1,
+    "date": "2020-05-01",
+    "category": 7,
+    "budget_amount": 100.0,
+    "monthly_spend": 0.0
+  }
+},
+{
+  "model": "budgettracker.budgettracker",
+  "pk": 97,
+  "fields": {
+    "user": 1,
+    "date": "2020-05-01",
+    "category": 12,
+    "budget_amount": 100.0,
+    "monthly_spend": 0.0
+  }
+},
+{
+  "model": "budgettracker.budgettracker",
+  "pk": 98,
+  "fields": {
+    "user": 1,
+    "date": "2020-05-01",
+    "category": 8,
+    "budget_amount": 250.0,
+    "monthly_spend": 0.0
+  }
+},
+{
+  "model": "budgettracker.budgettracker",
+  "pk": 112,
+  "fields": {
+    "user": 35,
+    "date": "2020-05-01",
+    "category": 80,
+    "budget_amount": 1000.0,
+    "monthly_spend": 0.0
+  }
+},
+{
+  "model": "budgettracker.budgettracker",
+  "pk": 117,
+  "fields": {
+    "user": 36,
+    "date": "2020-05-01",
+    "category": 83,
+    "budget_amount": 8473.98,
+    "monthly_spend": 0.0
+  }
+},
+{
+  "model": "budgettracker.budgettracker",
+  "pk": 119,
+  "fields": {
+    "user": 36,
+    "date": "2020-05-01",
+    "category": 85,
+    "budget_amount": 4057.65,
+    "monthly_spend": 0.0
+  }
+},
+{
+  "model": "budgettracker.budgettracker",
+  "pk": 120,
+  "fields": {
+    "user": 36,
+    "date": "2020-05-01",
+    "category": 86,
+    "budget_amount": 80.0,
+    "monthly_spend": 0.0
+  }
+},
+{
+  "model": "budgettracker.budgettracker",
+  "pk": 121,
+  "fields": {
+    "user": 36,
+    "date": "2020-05-01",
+    "category": 87,
+    "budget_amount": 100.0,
+    "monthly_spend": 0.0
+  }
+},
+{
+  "model": "budgettracker.budgettracker",
+  "pk": 122,
+  "fields": {
+    "user": 36,
+    "date": "2020-05-01",
+    "category": 88,
+    "budget_amount": 476.67,
+    "monthly_spend": 0.0
+  }
+},
+{
+  "model": "budgettracker.budgettracker",
+  "pk": 123,
+  "fields": {
+    "user": 36,
+    "date": "2020-05-01",
+    "category": 84,
+    "budget_amount": 600.0,
+    "monthly_spend": 0.0
+  }
+},
+{
+  "model": "budgettracker.budgettracker",
+  "pk": 124,
+  "fields": {
+    "user": 36,
+    "date": "2020-05-01",
+    "category": 89,
+    "budget_amount": 400.0,
+    "monthly_spend": 0.0
+  }
+},
+{
+  "model": "budgettracker.budgettracker",
+  "pk": 125,
+  "fields": {
+    "user": 36,
+    "date": "2020-05-01",
+    "category": 90,
+    "budget_amount": 148.44,
+    "monthly_spend": 0.0
+  }
+},
+{
+  "model": "budgettracker.budgettracker",
+  "pk": 126,
+  "fields": {
+    "user": 36,
+    "date": "2020-05-01",
+    "category": 91,
+    "budget_amount": 300.0,
+    "monthly_spend": 0.0
+  }
+},
+{
+  "model": "budgettracker.budgettracker",
+  "pk": 127,
+  "fields": {
+    "user": 36,
+    "date": "2020-05-01",
+    "category": 92,
+    "budget_amount": 100.0,
+    "monthly_spend": 0.0
+  }
+},
+{
+  "model": "budgettracker.budgettracker",
+  "pk": 128,
+  "fields": {
+    "user": 36,
+    "date": "2020-05-01",
+    "category": 93,
+    "budget_amount": 39.55,
+    "monthly_spend": 0.0
+  }
+},
+{
+  "model": "budgettracker.budgettracker",
+  "pk": 129,
+  "fields": {
+    "user": 36,
+    "date": "2020-05-01",
+    "category": 94,
+    "budget_amount": 100.0,
+    "monthly_spend": 0.0
+  }
+},
+{
+  "model": "budgettracker.budgettracker",
+  "pk": 130,
+  "fields": {
+    "user": 36,
+    "date": "2020-05-01",
+    "category": 95,
+    "budget_amount": 1000.0,
+    "monthly_spend": 0.0
+  }
+},
+{
+  "model": "budgettracker.budgettracker",
+  "pk": 131,
+  "fields": {
+    "user": 36,
+    "date": "2020-05-01",
+    "category": 96,
+    "budget_amount": 104.5,
+    "monthly_spend": 0.0
+  }
+},
+{
+  "model": "budgettracker.budgettracker",
+  "pk": 132,
+  "fields": {
+    "user": 36,
+    "date": "2020-05-01",
+    "category": 97,
+    "budget_amount": 400.0,
+    "monthly_spend": 0.0
+  }
+},
+{
+  "model": "budgettracker.budgettracker",
+  "pk": 133,
+  "fields": {
+    "user": 36,
+    "date": "2020-05-01",
+    "category": 98,
+    "budget_amount": 400.0,
+    "monthly_spend": 0.0
+  }
+},
+{
+  "model": "budgettracker.budgettracker",
+  "pk": 134,
+  "fields": {
+    "user": 36,
+    "date": "2020-05-01",
+    "category": 99,
+    "budget_amount": 300.0,
+    "monthly_spend": 0.0
+  }
+},
+{
+  "model": "budgettracker.budgettracker",
+  "pk": 135,
+  "fields": {
+    "user": 36,
+    "date": "2020-05-01",
+    "category": 100,
+    "budget_amount": 125.0,
+    "monthly_spend": 0.0
+  }
+},
+{
+  "model": "budgettracker.budgettracker",
+  "pk": 136,
+  "fields": {
+    "user": 36,
+    "date": "2020-05-01",
+    "category": 101,
+    "budget_amount": 45.14,
+    "monthly_spend": 0.0
+  }
+},
+{
+  "model": "budgettracker.budgettracker",
+  "pk": 137,
+  "fields": {
+    "user": 36,
+    "date": "2020-05-01",
+    "category": 102,
+    "budget_amount": 275.0,
+    "monthly_spend": 0.0
+  }
+},
+{
+  "model": "budgettracker.budgettracker",
+  "pk": 138,
+  "fields": {
+    "user": 36,
+    "date": "2020-05-01",
+    "category": 103,
+    "budget_amount": 125.0,
+    "monthly_spend": 0.0
+  }
+},
+{
+  "model": "budgettracker.budgettracker",
+  "pk": 139,
+  "fields": {
+    "user": 36,
+    "date": "2020-05-01",
+    "category": 104,
+    "budget_amount": 112.0,
+    "monthly_spend": 0.0
+  }
+},
+{
+  "model": "budgettracker.budgettracker",
+  "pk": 140,
+  "fields": {
+    "user": 36,
+    "date": "2020-05-01",
+    "category": 105,
+    "budget_amount": 100.0,
+    "monthly_spend": 0.0
+  }
+},
+{
+  "model": "budgettracker.budgettracker",
+  "pk": 141,
+  "fields": {
+    "user": 36,
+    "date": "2020-05-01",
+    "category": 106,
+    "budget_amount": 5000.0,
+    "monthly_spend": 0.0
+  }
+},
+{
+  "model": "budgettracker.budgettracker",
+  "pk": 142,
+  "fields": {
+    "user": 36,
+    "date": "2020-05-01",
+    "category": 107,
+    "budget_amount": 1000.0,
+    "monthly_spend": 0.0
+  }
+},
+{
+  "model": "budgettracker.budgettracker",
+  "pk": 143,
+  "fields": {
+    "user": 36,
+    "date": "2020-05-01",
+    "category": 108,
+    "budget_amount": 3000.0,
+    "monthly_spend": 0.0
+  }
+},
+{
+  "model": "budgettracker.budgettracker",
+  "pk": 144,
+  "fields": {
+    "user": 36,
+    "date": "2020-04-01",
+    "category": 83,
+    "budget_amount": 1900,
+    "monthly_spend": 1900
+  }
+},
+{
+  "model": "budgettracker.budgettracker",
+  "pk": 145,
+  "fields": {
+    "user": 36,
+    "date": "2020-04-01",
+    "category": 85,
+    "budget_amount": 4057.65,
+    "monthly_spend": 2000
+  }
+},
+{
+  "model": "budgettracker.budgettracker",
+  "pk": 146,
+  "fields": {
+    "user": 36,
+    "date": "2020-04-01",
+    "category": 86,
+    "budget_amount": 80.0,
+    "monthly_spend": 78.0
+  }
+},
+{
+  "model": "budgettracker.budgettracker",
+  "pk": 147,
+  "fields": {
+    "user": 36,
+    "date": "2020-04-01",
+    "category": 87,
+    "budget_amount": 100.0,
+    "monthly_spend": 90
+  }
+},
+{
+  "model": "budgettracker.budgettracker",
+  "pk": 148,
+  "fields": {
+    "user": 36,
+    "date": "2020-04-01",
+    "category": 88,
+    "budget_amount": 476.67,
+    "monthly_spend": 100
+  }
+},
+{
+  "model": "budgettracker.budgettracker",
+  "pk": 149,
+  "fields": {
+    "user": 36,
+    "date": "2020-04-01",
+    "category": 84,
+    "budget_amount": 600.0,
+    "monthly_spend": 600
+  }
+},
+{
+  "model": "budgettracker.budgettracker",
+  "pk": 150,
+  "fields": {
+    "user": 36,
+    "date": "2020-04-01",
+    "category": 89,
+    "budget_amount": 400.0,
+    "monthly_spend": 0
+  }
+},
+{
+  "model": "budgettracker.budgettracker",
+  "pk": 151,
+  "fields": {
+    "user": 36,
+    "date": "2020-04-01",
+    "category": 90,
+    "budget_amount": 148.44,
+    "monthly_spend": 148.44
+  }
+},
+{
+  "model": "budgettracker.budgettracker",
+  "pk": 152,
+  "fields": {
+    "user": 36,
+    "date": "2020-04-01",
+    "category": 91,
+    "budget_amount": 300.0,
+    "monthly_spend": 280
+  }
+},
+{
+  "model": "budgettracker.budgettracker",
+  "pk": 153,
+  "fields": {
+    "user": 36,
+    "date": "2020-04-01",
+    "category": 92,
+    "budget_amount": 100.0,
+    "monthly_spend": 91
+  }
+},
+{
+  "model": "budgettracker.budgettracker",
+  "pk": 154,
+  "fields": {
+    "user": 36,
+    "date": "2020-04-01",
+    "category": 93,
+    "budget_amount": 39.55,
+    "monthly_spend": 39.55
+  }
+},
+{
+  "model": "budgettracker.budgettracker",
+  "pk": 155,
+  "fields": {
+    "user": 36,
+    "date": "2020-04-01",
+    "category": 94,
+    "budget_amount": 100.0,
+    "monthly_spend": 93
+  }
+},
+{
+  "model": "budgettracker.budgettracker",
+  "pk": 156,
+  "fields": {
+    "user": 36,
+    "date": "2020-04-01",
+    "category": 95,
+    "budget_amount": 1000.0,
+    "monthly_spend": 1000.0
+  }
+},
+{
+  "model": "budgettracker.budgettracker",
+  "pk": 157,
+  "fields": {
+    "user": 36,
+    "date": "2020-04-01",
+    "category": 96,
+    "budget_amount": 104.5,
+    "monthly_spend": 104.5
+  }
+},
+{
+  "model": "budgettracker.budgettracker",
+  "pk": 158,
+  "fields": {
+    "user": 36,
+    "date": "2020-04-01",
+    "category": 97,
+    "budget_amount": 400.0,
+    "monthly_spend": 400
+  }
+},
+{
+  "model": "budgettracker.budgettracker",
+  "pk": 159,
+  "fields": {
+    "user": 36,
+    "date": "2020-04-01",
+    "category": 98,
+    "budget_amount": 400.0,
+    "monthly_spend": 400
+  }
+},
+{
+  "model": "budgettracker.budgettracker",
+  "pk": 160,
+  "fields": {
+    "user": 36,
+    "date": "2020-04-01",
+    "category": 99,
+    "budget_amount": 300.0,
+    "monthly_spend": 288
+  }
+},
+{
+  "model": "budgettracker.budgettracker",
+  "pk": 161,
+  "fields": {
+    "user": 36,
+    "date": "2020-04-01",
+    "category": 100,
+    "budget_amount": 125.0,
+    "monthly_spend": 104
+  }
+},
+{
+  "model": "budgettracker.budgettracker",
+  "pk": 162,
+  "fields": {
+    "user": 36,
+    "date": "2020-04-01",
+    "category": 101,
+    "budget_amount": 45.14,
+    "monthly_spend": 45.14
+  }
+},
+{
+  "model": "budgettracker.budgettracker",
+  "pk": 163,
+  "fields": {
+    "user": 36,
+    "date": "2020-04-01",
+    "category": 102,
+    "budget_amount": 275.0,
+    "monthly_spend": 225
+  }
+},
+{
+  "model": "budgettracker.budgettracker",
+  "pk": 164,
+  "fields": {
+    "user": 36,
+    "date": "2020-04-01",
+    "category": 103,
+    "budget_amount": 125.0,
+    "monthly_spend": 87
+  }
+},
+{
+  "model": "budgettracker.budgettracker",
+  "pk": 165,
+  "fields": {
+    "user": 36,
+    "date": "2020-04-01",
+    "category": 104,
+    "budget_amount": 112.0,
+    "monthly_spend": 41
+  }
+},
+{
+  "model": "budgettracker.budgettracker",
+  "pk": 166,
+  "fields": {
+    "user": 36,
+    "date": "2020-04-01",
+    "category": 105,
+    "budget_amount": 100.0,
+    "monthly_spend": 27
+  }
+},
+{
+  "model": "budgettracker.budgettracker",
+  "pk": 167,
+  "fields": {
+    "user": 36,
+    "date": "2020-04-01",
+    "category": 106,
+    "budget_amount": 5000.0,
+    "monthly_spend": 0.0
+  }
+},
+{
+  "model": "budgettracker.budgettracker",
+  "pk": 168,
+  "fields": {
+    "user": 36,
+    "date": "2020-04-01",
+    "category": 107,
+    "budget_amount": 1000.0,
+    "monthly_spend": 225
+  }
+},
+{
+  "model": "budgettracker.budgettracker",
+  "pk": 169,
+  "fields": {
+    "user": 36,
+    "date": "2020-04-01",
+    "category": 108,
+    "budget_amount": 202.0,
+    "monthly_spend": 202
+  }
+},
+
+
+{
+  "model": "budgettracker.budgetleft",
+  "pk": 1,
+  "fields": {
+    "user": 1,
+    "amount": 350.0
+  }
+},
+{
+  "model": "budgettracker.budgetleft",
+  "pk": 2,
+  "fields": {
+    "user": 35,
+    "amount": -22400.0
+  }
+}
+]

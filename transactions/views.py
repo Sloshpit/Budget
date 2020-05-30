@@ -67,8 +67,8 @@ class TransactionCreate (LoginRequiredMixin, CreateView):
      #   bud_date = str(trans_date.year) +"-" +str(trans_date.month) + "-"+ "1"
         bud_date = get_first_of_month(trans_date)
         #create a category budget for a transaction if it does not exist
-        if not BudgetTracker.objects.filter(date=bud_date, user=self.request.user).exists():
-            print ('inside no category exists for transaction')
+        if not BudgetTracker.objects.filter(date=bud_date, user=self.request.user, category__category=category).exists():
+            budget_does_not_exist = 'Create a budget for this category before adding a transaction'
             bud_amount = amount
             if amount < 0:
                 bud_amount = bud_amount *-1
@@ -88,7 +88,7 @@ class TransactionCreate (LoginRequiredMixin, CreateView):
             new_balance = latest_account['balance'] + amount
             print ('new balance:')
             print (new_balance)
-            update_account = AccountBalance.objects.filter(account__account_name = acct_name, balance_date__lte=trans_date, account__user=self.request.user).update(balance = new_balance)
+            update_account = AccountBalance.objects.filter(account__account_name = acct_name, balance_date=trans_date, account__user=self.request.user).update(balance = new_balance)
             print ('update')
             print (update_account)
             records_to_update = AccountBalance.objects.filter(account__account_name=acct_name, account__user=self.request.user, balance_date__gt=trans_date, balance_date__lte = now.date())
@@ -143,7 +143,7 @@ class TransactionCreate (LoginRequiredMixin, CreateView):
     #fields = '__all__'
 
 class TransactionUpdate (LoginRequiredMixin, UpdateView):
-    template_name = 'transactions/transaction_form.html'
+    template_name = 'transactions/transaction_update.html'
     form_class = UpdateTransactionForm
     success_url = reverse_lazy('transaction-index') 
     #form = CreateTransactionForm
@@ -224,6 +224,9 @@ class TransactionDelete (LoginRequiredMixin, DeleteView):
         print ('user!!')
         user = self.object.user
         print (user)
+        print ('---------Transaciton date------------')
+        print (trans_date)
+        print (today)
  #   account_record_to_delete = AccountBalance.objects.filter(account__user=user,balance_date=trans_date, account=acct_name).delete()
         records_to_update = AccountBalance.objects.filter(account__user=user, account=acct_name, balance_date__gte=trans_date, balance_date__lte = today)
         print ('records to update')
@@ -287,3 +290,21 @@ def category_details (request,categoryid):
             'total': total,
         }
         return HttpResponse(template.render(context, request))
+
+def category_budget_check (request):
+   category = request.GET.get ('category',None)
+   the_date = request.GET.get ('date', None)
+   date_time_obj = datetime.strptime(the_date, '%m/%d/%Y')
+   string_date = str(date_time_obj.year) + "-" + str(date_time_obj.month) + "-" + "1"
+   print (string_date)
+   print (request.user)
+   print (category)
+   print (the_date)
+   budget_exist = 'false'
+   if BudgetTracker.objects.filter(date=string_date, user=request.user, category__category=category).exists():
+            budget_exist = 'true'
+   print (budget_exist)
+   data = {
+     'budget_exist': budget_exist
+    }
+   return JsonResponse(data)

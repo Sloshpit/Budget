@@ -13,11 +13,18 @@ import calendar
 from calendar import monthrange
 from .forms import CreateBudget, UpdateBudget
 from django.views.generic.edit import CreateView, DeleteView, UpdateView
+from django.views.generic import ListView
 from django.urls import reverse_lazy
 from dateutil.relativedelta import relativedelta
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.contrib.auth.decorators import login_required
 from budgets.budgets.common import *
+from django_datatables_view.base_datatable_view import BaseDatatableView
+from django.utils.html import escape
+
+from django_tables2 import SingleTableView
+from .tables import BudgetTable
+
 @login_required
 
 def get_cat_budget(request):
@@ -320,3 +327,16 @@ def get_budget_average (request):
         'category_average_budget': category_average_budget
     }
     return JsonResponse(data)
+
+
+class BudgetListView (SingleTableView):
+    model = BudgetTracker
+    table_class = BudgetTable
+    template_name='budgettracker/budget-list.html'
+
+def budget_list (request):
+    table=BudgetTable(BudgetTracker.objects.filter(user=request.user, date='2020-05-01').annotate(total_left=(F('budget_amount')+F('monthly_spend'))).order_by('-budget_amount'))
+    table.paginate(page=request.GET.get("page", 1), per_page=25)
+    return render(request, 'budgettracker/budget-list.html',{
+        "table":table
+    })

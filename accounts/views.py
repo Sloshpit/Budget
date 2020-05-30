@@ -12,6 +12,7 @@ from .forms import GetDateForm, AccountForm
 from datetime import date
 import numpy as np
 from django.views.generic.edit import CreateView, DeleteView, UpdateView
+from django.views.generic import ListView
 from django.shortcuts import render, redirect, reverse
 from django.urls import reverse_lazy
 from pytz import timezone
@@ -34,7 +35,7 @@ def index(request):
     latest_account = []
 
     for account in account_list:
-        latest_account.append(AccountBalance.objects.filter(account__account_name=account.account_name, account__user=request.user, balance_date__lte=today).values ('account__account_name', 'balance', 'balance_date').latest('balance_date'))
+        latest_account.append(AccountBalance.objects.filter(account__account_name=account.account_name, account__user=request.user, balance_date__lte=today).values ('account__account_name', 'balance', 'balance_date','account__id').latest('balance_date'))
         print(latest_account)
     for account in latest_account:
         total_cash= account['balance'] + total_cash
@@ -86,3 +87,21 @@ class DeleteAccount(LoginRequiredMixin,DeleteView):
      form_class = AccountForm
      success_url = reverse_lazy('accounts-index') 
      model = Account
+
+class ShowTransactions (LoginRequiredMixin, ListView):
+    model = Transaction
+    template_name = 'accounts/details.html'
+    context_object_name = 'big_list'
+  # def get_queryset(self, **kwargs):
+  #      account_id = str(self.kwargs)
+  #      print (account_id)
+  #      account_name=self.request.GET['account']
+  #      print (account_name)
+  #      context ['transactions'] =  Transaction.objects.filter(user=self.request.user, account_name__account_name=account_name).order_by('-trans_date')
+  #      return (context)
+    def get_context_data(self, **kwargs):
+        account_name = self.request.GET['account']
+        context = super (ShowTransactions, self).get_context_data(**kwargs)
+        context ['account_balances']= AccountBalance.objects.filter(account__user=self.request.user, account__account_name = account_name).order_by('-balance_date')
+        context ['transactions'] =  Transaction.objects.filter(user=self.request.user, account_name__account_name=account_name).order_by('-trans_date')
+        return (context)

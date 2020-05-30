@@ -1,0 +1,19 @@
+{% extends 'base.html' %}
+
+{% load crispy_forms_tags %}
+
+{% load render_table from django_tables2 %}
+{% block content %}
+
+    <h1>Budget </h1>
+ <form method="post">
+    {% csrf_token %}
+    {{ form|crispy }}
+    <div class="mt-2"></div>
+      <div id="average_budget"></div>   
+      <div class="row mt-3"></div> 
+    <button type="submit" class="btn btn-primary">Submit</button>
+  </form>    
+        {% render_table table %}
+
+{% endblock %}
