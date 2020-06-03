@@ -67,13 +67,17 @@ class TransactionCreate (LoginRequiredMixin, CreateView):
      #   bud_date = str(trans_date.year) +"-" +str(trans_date.month) + "-"+ "1"
         bud_date = get_first_of_month(trans_date)
         #create a category budget for a transaction if it does not exist
-        if not BudgetTracker.objects.filter(date=bud_date, user=self.request.user, category__category=category).exists():
-            budget_does_not_exist = 'Create a budget for this category before adding a transaction'
-            bud_amount = amount
-            if amount < 0:
-                bud_amount = bud_amount *-1
-            new_budget = BudgetTracker(category=category, budget_amount = bud_amount, monthly_spend = '0', date = bud_date, user=self.request.user)
-            new_budget.save()
+        print ('category before if or statement:')
+        print (category)
+        if (str(category) != 'Income' and str(category) !='Initial Balance'):
+            print ('--------inside not!!!!!!!!!--------')
+            if not BudgetTracker.objects.filter(date=bud_date, user=self.request.user, category__category=category).exists():
+                budget_does_not_exist = 'Create a budget for this category before adding a transaction'
+                bud_amount = amount
+                if amount < 0:
+                    bud_amount = bud_amount *-1
+                new_budget = BudgetTracker(category=category, budget_amount = bud_amount, monthly_spend = '0', date = bud_date, user=self.request.user)
+                new_budget.save()
         # get the latest account balance based on the transaction date.  This should account for a present record and going into the past.
 
         #latest_account = AccountBalance.objects.filter(account__account_name=acct_name).values('account__account_name', 'balance', 'balance_date').latest('balance_date')
@@ -301,8 +305,11 @@ def category_budget_check (request):
    print (category)
    print (the_date)
    budget_exist = 'false'
-   if BudgetTracker.objects.filter(date=string_date, user=request.user, category__category=category).exists():
-            budget_exist = 'true'
+   if (category =='Income' or category== 'Initial Balance'):
+       budget_exist = 'true'
+
+   elif BudgetTracker.objects.filter(date=string_date, user=request.user, category__category=category).exists():
+        budget_exist = 'true'
    print (budget_exist)
    data = {
      'budget_exist': budget_exist
