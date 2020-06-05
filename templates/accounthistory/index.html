@@ -1,0 +1,47 @@
+{% extends 'base.html' %}
+{% block content %}
+<div class="container-fluid">
+      <div class="row justify-content-center">
+        <div class="col-12">
+          <h1 class="mt-2">Account List</h1>
+<p> Here are some Accounts</p>
+
+
+
+<table class="table table-striped table-bordered">
+<thead>
+<tr>
+<th scope="col">Account Name</th>
+<th scope="col">Store/Business</th>
+<th scope="col">Transaction Category</th>
+<th scope="col">Transaction Amount </th>
+<th scope="col">Transfer Incoming </th>
+<th scope="col">Transfer Outgoing </th>
+<th scope="col">Balance Date as of</th>
+<th scope="col">Balance</th>
+</thead>
+<tbody>
+{% if show_history %}
+    {% for acct in  show_history  %}
+        <tr>
+        <td><strong>{{acct.account}}</strong></td>
+        <td>{{acct.transaction.store}}</td>
+        <td>{{acct.transaction.category}}</td>
+        <td>{{acct.transaction.amount|floatformat:2}}</td>
+        <td> {{acct.transfer.incoming_account}}<div class="text-success"><strong>{{acct.transfer.transfer_amount|floatformat:2}}</strong></div></td>
+        <td> {{acct.transfer.outgoing_account}}<div class="text-danger"><strong>{{acct.transfer.transfer_amount|floatformat:2}}</strong></div></td>
+        <td>{{acct.date| date:'F d Y h:i A'}}</td>
+        <td><strong>${{ acct.balance|floatformat:2 }}</strong></td>
+
+    {% endfor %}
+{% else %}
+    Nothing available
+{% endif %}
+</tbody>
+</table>
+<p>Note: Negative balance means money is owing.  Generally loans and credit cards have a negative balance </p>
+</div>
+</div>
+</div>
+
+{% endblock %}

@@ -1,5 +1,5 @@
 from django import forms
-from bootstrap_datepicker_plus import DatePickerInput, MonthPickerInput
+from bootstrap_datepicker_plus import DatePickerInput, MonthPickerInput, DateTimePickerInput
 from django.forms import ModelForm
 import datetime
 from accounts.models import Account
@@ -17,7 +17,7 @@ class CreateTransactionForm(forms.ModelForm):
         model = Transaction
         fields =('store','description','transaction_type','category','amount', 'account_name', 'trans_date')
         widgets = {
-            'trans_date': DatePickerInput(format='%m/%d/%Y').start_of('transaction days'), # default date-format %m/%d/%Y will be used
+            'trans_date': DateTimePickerInput(format='%m/%d/%Y %H:%M:%S').start_of('transaction days'), # default date-format %m/%d/%Y will be used
         }
     def __init__(self, *args, logged_user_id=None, **kwargs):
        super().__init__(*args, **kwargs)

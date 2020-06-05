@@ -32,6 +32,7 @@ ALLOWED_HOSTS = []
 
 INSTALLED_APPS = [
     'users.apps.UsersConfig',
+    'accounthistory.apps.AccounthistoryConfig',
     'transfers.apps.TransfersConfig',
     'transactions.apps.TransactionsConfig',
     'accounts.apps.AccountsConfig',
@@ -144,6 +145,6 @@ DEFAULT_FROM_EMAIL = 'personal budgets'
 
 SESSION_COOKIE_NAME = 'sessionid'
 SESSION_EXPIRE_AT_BROWSER_CLOSE = False
-SESSION_COOKIE_AGE = 10 * 60
+SESSION_COOKIE_AGE = 10 * 60000
 SESSION_COOKIE_SECURE = False
 ALLOWED_HOSTS = ['127.0.0.1', 'localhost', '192.168.1.27']

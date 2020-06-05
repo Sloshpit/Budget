@@ -3,6 +3,7 @@ from django.http import HttpResponseRedirect
 from django.template import loader
 from django.db.models import Sum
 from .models import Account, AccountBalance
+from accounthistory.models import AccountHistory
 from django.db.models import Max
 from transfers.models import Transfer
 from transactions.models import Transaction
@@ -69,8 +70,11 @@ class CreateAccount(LoginRequiredMixin,CreateView):
         print (category)
         new_record = AccountBalance(account=account_record[0], balance_description = balance_description, balance=initial_balance, balance_date=date.date())        
         new_record.save() 
+
         initial_balance_transaction = Transaction(user = self.request.user,store=account_name, description = balance_description, amount = initial_balance, trans_date = date.date(), category= category[0], account_name = account_record[0])
         initial_balance_transaction.save()
+        new_record_history = AccountHistory(user=self.request.user, account = account_record[0], transaction=initial_balance_transaction, date=date, balance = initial_balance)
+        new_record_history.save()
         total_budget_left = 0
 
         print (initial_balance_transaction)
@@ -105,3 +109,23 @@ class ShowTransactions (LoginRequiredMixin, ListView):
         context ['account_balances']= AccountBalance.objects.filter(account__user=self.request.user, account__account_name = account_name).order_by('-balance_date')
         context ['transactions'] =  Transaction.objects.filter(user=self.request.user, account_name__account_name=account_name).order_by('-trans_date')
         return (context)
+
+def test (request):
+        #get all transaction dates for account
+        template = loader.get_template ('accounts/test.html')
+        account_name = 'Westjet'
+        user = '36'
+        transaction_dates = Transaction.objects.filter (user=user, account_name__account_name=account_name).values('trans_date').distinct().order_by('-trans_date')
+        transactions = Transaction.objects.filter (user=user, account_name__account_name=account_name).order_by('-trans_date')
+        latest_transactions = Transaction.objects.filter (user=user, account_name__account_name=account_name).latest('trans_date')
+        account_balance = AccountBalance.objects.filter (account__user=user, account__account_name=account_name).values('balance', 'balance_date').order_by('-balance_date')
+        print ('account balance -----')
+        print (account_balance)
+        print (transactions)
+        print ('----latest transactions')
+        print (latest_transactions)
+        context = {
+          'transaction_dates': transaction_dates,
+          'transactions': transactions,
+       }
+        return HttpResponse(template.render(context, request))

@@ -1,5 +1,5 @@
 from django import forms
-from bootstrap_datepicker_plus import DatePickerInput, MonthPickerInput
+from bootstrap_datepicker_plus import DatePickerInput, MonthPickerInput, DateTimePickerInput
 from django.forms import ModelForm
 import datetime
 from accounts.models import Account
@@ -12,7 +12,7 @@ class TransferForm(forms.ModelForm):
         model = Transfer
         exclude = ('user',)
         widgets = {
-            'transfer_date': DatePickerInput(), # default date-format %m/%d/%Y will be used
+            'transfer_date': DateTimePickerInput(format='%m/%d/%Y %H:%M:%S'), # default date-format %m/%d/%Y will be used
         }
     def __init__(self, *args, logged_user_id=None, **kwargs):
        super().__init__(*args, **kwargs)

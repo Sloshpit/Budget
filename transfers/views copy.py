@@ -119,11 +119,11 @@ class TransactionCreate (LoginRequiredMixin, CreateView):
         #create a new balance record if one doesn't exist for that date
             balance_description = str(store) +" "+ str(category)
             new_account_balance=amount + float(latest_account['balance'])        
-            new_record = AccountBalance(account=acct_name, balance_description = balance_description, balance=new_account_balance, balance_date=trans_date.date())
+            new_record = AccountBalance(account=acct_name, balance_description = balance_description, balance=new_account_balance, balance_date=trans_date)
             new_record.save()
-            new_account_history_record = AccountHistory(user=self.request.user, account = acct_name, transaction=self.object, date=trans_date, balance = new_account_balance)
+            new_account_history_record = AccountHistory(user=self.request.user, account = acct_name, transaction=self.object, date=trans_date, balance = new_balance)
             new_account_history_record.save() 
-            new_acct_records_to_update = AccountHistory.objects.filter (account=acct_name, user=self.request.user, date__gt=trans_date, date__lte = now)
+            new_acct_records_to_update = AccountHistory (account=acct_name, user=self.request.user, date__gt=trans_date, date__lte = now)
             records_to_update = AccountBalance.objects.filter(account__account_name=acct_name, account__user=self.request.user,balance_date__gt=trans_date, balance_date__lte = now.date())
             print (records_to_update)
         #update any potential future records
@@ -159,8 +159,7 @@ class TransactionCreate (LoginRequiredMixin, CreateView):
         for budget in category_budget:
             print (budget.budget_amount)
             budget.budget_amount =  budget.budget_amount + transaction_spend
-            budget.save()      
-        print ('-------end of create Transaction class')             
+            budget.save()               
         return super().form_valid(form)
 
     #fields = '__all__'
@@ -265,7 +264,7 @@ class TransactionDelete (LoginRequiredMixin, DeleteView):
         print ('---------Transaciton date------------')
         print (trans_date)
         print (today)
-      #  trans_date = (timezone.localtime(trans_date))
+        trans_date = (timezone.localtime(trans_date))
 #        trans_date = form.cleaned_data['trans_date']
         trans_date_no_time_string = str(trans_date.year)+'-' + str(trans_date.month) + '-'+ str(trans_date.day)
         trans_date_no_time = trans_date.date()        
@@ -344,7 +343,7 @@ def category_details (request,categoryid):
 def category_budget_check (request):
    category = request.GET.get ('category',None)
    the_date = request.GET.get ('date', None)
-   date_time_obj = datetime.strptime(the_date, '%m/%d/%Y %H:%M:%S')
+   date_time_obj = datetime.strptime(the_date, '%m/%d/%Y')
    string_date = str(date_time_obj.year) + "-" + str(date_time_obj.month) + "-" + "1"
    print (string_date)
    print (request.user)
