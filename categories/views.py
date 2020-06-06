@@ -4,7 +4,7 @@ from django.db.models import Sum
 from transactions.models import Transaction
 from .models import Category
 from django.views.generic.edit import CreateView, DeleteView, UpdateView
-from .forms import CategoryForm
+from .forms import CategoryForm, UpdateCategoryForm
 from django.shortcuts import render, redirect, reverse
 from django.urls import reverse_lazy
 from django.contrib.auth.decorators import login_required
@@ -44,7 +44,7 @@ class CreateCategory(LoginRequiredMixin, CreateView):
 
 class UpdateCategory(LoginRequiredMixin, UpdateView):
      template_name = 'categories/categories_form.html'
-     form_class = CategoryForm
+     form_class = UpdateCategoryForm
      success_url = reverse_lazy('categories-index') 
      model = Category
      def get_form_kwargs(self):

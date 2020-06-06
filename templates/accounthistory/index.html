@@ -15,8 +15,6 @@
 <th scope="col">Store/Business</th>
 <th scope="col">Transaction Category</th>
 <th scope="col">Transaction Amount </th>
-<th scope="col">Transfer Incoming </th>
-<th scope="col">Transfer Outgoing </th>
 <th scope="col">Balance Date as of</th>
 <th scope="col">Balance</th>
 </thead>
@@ -25,13 +23,24 @@
     {% for acct in  show_history  %}
         <tr>
         <td><strong>{{acct.account}}</strong></td>
-        <td>{{acct.transaction.store}}</td>
-        <td>{{acct.transaction.category}}</td>
-        <td>{{acct.transaction.amount|floatformat:2}}</td>
-        <td> {{acct.transfer.incoming_account}}<div class="text-success"><strong>{{acct.transfer.transfer_amount|floatformat:2}}</strong></div></td>
-        <td> {{acct.transfer.outgoing_account}}<div class="text-danger"><strong>{{acct.transfer.transfer_amount|floatformat:2}}</strong></div></td>
+        <td>{% if acct.transfer.incoming_account == acct.account %} Incoming transfer from: <strong>{{acct.transfer.outgoing_account}}</strong>
+            {% elif acct.transfer.outgoing_account == acct.account %}Outgoing transfer to: <strong> {{acct.transfer.incoming_account}}</strong>
+            {% else %}{{acct.transaction.store}}
+            {% endif %}</td>
+        <td>{% if acct.transfer.incoming_account == acct.account or acct.transfer.outgoing_account == acct.account %} <div class="text-warning">Transfer</div>
+        {% else %}
+        {{acct.transaction.category}}
+        {% endif %}</td>
+        <td>{% if   acct.account == acct.transfer.incoming_account %} <div class="text-success">${{ acct.transfer.transfer_amount }}</div>
+            {% elif acct.account == acct.transfer.outgoing_account  %}  <div class="text-danger">${{ acct.transfer.transfer_amount|floatformat:2|cut:"-" }}</div>
+            {% else %} ${{acct.transaction.amount|floatformat:2}}
+            {% endif %}</td>
         <td>{{acct.date| date:'F d Y h:i A'}}</td>
-        <td><strong>${{ acct.balance|floatformat:2 }}</strong></td>
+        <td>{% if acct.balance > 0 %} <strong>{{ acct.balance | floatformat:2}}</strong>
+            {% else %}
+         <div class="text-danger"><strong>${{ acct.balance|floatformat:2 |cut:"-" }}</strong></div>
+         {% endif %}
+         </td>
 
     {% endfor %}
 {% else %}

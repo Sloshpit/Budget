@@ -79,6 +79,7 @@ def get_monthly_budget (start_month, request):
     print (startdate)
     budget_total =  BudgetTracker.objects.filter(date__range=[startdate,enddate], user=request.user).aggregate(sum=Sum('budget_amount'))['sum'] or 0.00
     total_spend =  BudgetTracker.objects.filter(date__range=[startdate,enddate], user=request.user).aggregate(sum=Sum('monthly_spend'))['sum'] or 0.00
+    
     account_names = Account.objects.filter(user=request.user).values('account_name').distinct()
 
     total_account_balance = 0
@@ -89,11 +90,9 @@ def get_monthly_budget (start_month, request):
     #    get the initial balance for each record in the given month.
     initial_balance = Transaction.objects.filter(trans_date__range=[startdate,enddate], category__category="Initial Balance", user=request.user).aggregate(sum=Sum('amount'))['sum'] or 0.00
     income = Transaction.objects.filter(trans_date__range=[startdate,enddate], user=request.user, category__category="Income").aggregate(sum=Sum('amount'))['sum'] or 0.00
-    print ('initial balance and initial income')
     print (initial_balance)
     print (income)
     total_left = float(initial_balance) + float(budget_total)
-    print ('intial balance')
 
     #get all refund/income transactions
     first_of_month = get_first_of_month(start_month)
@@ -134,7 +133,8 @@ def get_monthly_budget (start_month, request):
     total_monthly_spend = BudgetTracker.objects.filter(date__range=[startdate,enddate], user=request.user)
 
     total_monthly_budget_left = budget_total + total_spend
-
+    print ('-------------money left to spend')
+    print (total_monthly_budget_left)
     total_monthly_budget_percentage = (total_spend/budget_total)*-100
     form = GetDateForm()   
     form.fields['start_month'].label = "View budget for:"

@@ -82,13 +82,15 @@ class CreateTransfer(LoginRequiredMixin, CreateView):
         #Incoming account record DOES NOT exist for date
         else:
             #get the latest balance on file
-            latest_incoming_account = AccountBalance.objects.filter(account__account_name=incoming_account, account__user=self.request.user.id, balance_date=transfer_date.date()).latest('balance_date')
+            latest_incoming_account = AccountBalance.objects.filter(account=incoming_account, account__user=self.request.user.id, balance_date__lte=transfer_date.date()).values('account__account_name', 'balance', 'balance_date').latest('balance_date')
+            print ('latest incoming account')
+            print (latest_incoming_account)
             
             #calculate the new balance
             incoming_account_balance=latest_incoming_account['balance']
             new_incoming_balance=transfer_amount + float(incoming_account_balance)
 
-            new_incoming_record = AccountBalance(account=incoming_account, balance_description = balance_description, balance=new_incoming_balance, balance_date=transfer.date.date())
+            new_incoming_record = AccountBalance(account=incoming_account, balance_description = balance_description, balance=new_incoming_balance, balance_date=transfer_date.date())
 
             #grab any future account balance records to update
             incoming_account_records_to_update = AccountBalance.objects.filter(balance_date__gt=transfer_date.date(), balance_date__lte = now.date(), account=incoming_account, account__user=self.request.user.id)
@@ -139,13 +141,13 @@ class CreateTransfer(LoginRequiredMixin, CreateView):
                 record.save()                     
         else:
             #get the latest balance on file
-            latest_outgoing_account = AccountBalance.objects.filter(account__account_name=outgoing_account, account__user=self.request.user.id, balance_date=transfer_date.date()).latest('balance_date')
+            latest_outgoing_account = AccountBalance.objects.filter(account=outgoing_account, account__user=self.request.user.id, balance_date__lte=transfer_date.date()).values('account__account_name', 'balance', 'balance_date').latest('balance_date')
             
             #calculate the new balance
             outgoing_account_balance=latest_outgoing_account['balance']
             new_outgoing_balance=float(outgoing_account_balance) - transfer_amount 
 
-            new_outgoing_record = AccountBalance(account=outgoing_account, balance_description = balance_description, balance=new_outgoing_balance, balance_date=transfer.date.date())
+            new_outgoing_record = AccountBalance(account=outgoing_account, balance_description = balance_description, balance=new_outgoing_balance, balance_date=transfer_date.date())
 
             #grab any future account balance records to update
             outgoing_account_records_to_update = AccountBalance.objects.filter(balance_date__gt=transfer_date.date(), balance_date__lte = now.date(), account=outgoing_account, account__user=self.request.user.id)

@@ -48,6 +48,7 @@ INSTALLED_APPS = [
     'bootstrap4',
     'crispy_forms',
     'django_tables2',
+    'django.contrib.humanize',
 
 ]
 
@@ -130,6 +131,7 @@ USE_TZ = True
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/3.0/howto/static-files/
 
+USE_THOUSAND_SEPARATOR = True
 STATIC_URL = '/static/'
 LOGIN_URL = '/users/login'
 LOGIN_REDIRECT_URL = '/accounts'
