@@ -72,7 +72,9 @@ def get_monthly_budget (start_month, request):
     print ('-------b_f_month---------')
     print (b_f_month)
     print ('--------budgets for selected month---------')
-    budgets_for_selected_month = b_f_month.annotate(total_left=(F('budget_amount')+F('monthly_spend'))).order_by('-budget_amount')
+   # budgets_for_selected_month = b_f_month.annotate(total_left=(F('budget_amount')+F('monthly_spend'))).order_by('-budget_amount')
+    budgets_for_selected_month = b_f_month.annotate(total_left=(F('budget_amount')+F('monthly_spend')), total_percent_left = ((F('monthly_spend')+F('budget_amount'))/F('budget_amount'))*100).order_by('-budget_amount')
+
     print (budgets_for_selected_month)
    # budgets_for_selected_month = BudgetTracker.objects.filter(date__range=[startdate,enddate], user=request.user).exclude(category__category=exclude_list).annotate(total_left=(F('budget_amount')+F('monthly_spend'))).order_by('-budget_amount')
     print ('----start date')
@@ -133,7 +135,7 @@ def get_monthly_budget (start_month, request):
     total_monthly_spend = BudgetTracker.objects.filter(date__range=[startdate,enddate], user=request.user)
 
     total_monthly_budget_left = budget_total + total_spend
-    print ('-------------money left to spend')
+    print ('-------------money left')
     print (total_monthly_budget_left)
     total_monthly_budget_percentage = (total_spend/budget_total)*-100
     form = GetDateForm()   

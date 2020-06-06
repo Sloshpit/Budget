@@ -8,18 +8,16 @@
     <div class="p-2"><a class = "btn btn-success" href="{%url "transaction-add"%}">Add a transaction</a></div>
 </div>
 <div class="mt-2"></div>
-<table class="table table-dark table-bordered">
+<table class="table  table-bordered">
 <thead>
 <tr>
 <th scope="col">Store</th>
 <th scope="col">Category</th>
-<th scope="col">Category ID</th>
 <th scope="col">Category Name</th>
 <th scope="col">Amount</th>
 <th scope="col">Transaction Date</th>
 <th scope="col">Account</th>
-<th scope="col">User</th>
-<th scope="col">Mange</th>
+<th scope="col">Manage</th>
 
 </thead>
 
@@ -29,12 +27,10 @@
         <tr>
         <td>{{ transaction.store }}</td>
         <td> <a href="{%url "category-details" transaction.category_id%}">{{transaction.category}}</a></td>        
-        <td>{{ transaction.category_id }}</td>
         <td>{{ transaction.description }}</td>
         <td>${{ transaction.amount | floatformat:2 }}</td>
         <td>{{ transaction.trans_date }}</td>
         <td>{{ transaction.account_name }}</td>
-        <td>{{ transaction.user }}</td>
 
         <td> <a class = "btn btn-danger" href="{%url "transaction-delete" transaction.id%}">Delete</a> <a class = "btn btn-warning" href="{%url "transaction-update" transaction.id%}">Update</a></td>
        </tr>

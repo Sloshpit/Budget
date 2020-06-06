@@ -13,7 +13,7 @@
           <div class="col-md-4">
          <div class="card">
             <div class="card-body">
-            <h5 class="card-title">Budget Left This Month</h5>
+            <h5 class="card-title">Budget left this month</h5>
             <p class="card-text">$ {{total_budget_left| floatformat:2}}</p>
         </div>
       </div>
@@ -21,7 +21,7 @@
         <div class="col-md-4">
            <div class="card" >
             <div class="card-body">
-            <h5 class="card-title">Budget Spend This Month</h5>
+            <h5 class="card-title">Budget spend this month</h5>
             <p class="card-text">{{total_monthly_budget_percentage| floatformat:2}}%</p>
           </div>
       </div>
@@ -30,8 +30,22 @@
           <div class="col-md-4">
            <div class="card" >
             <div class="card-body">
-            <h5 class="card-title">You can still Spend</h5>
-            <p class="card-text">${{total_monthly_budget_left| floatformat:2}}</p>
+            <h5 class="card-title">You can still spend</h5>
+            <p class="card-text">
+            {% if total_monthly_budget_percentage <= 50 %}
+            <div class="text-success">
+            <strong>${{total_monthly_budget_left| floatformat:2}}</strong>
+            </div>
+            {% elif total_monthly_budget_percentage > 50 <= 80 %}
+            <div class="text-warning">
+            <strong>${{ total_monthly_budget_left| floatformat:2 }}</strong>
+            </div>
+            {% else %}
+            <div class="text-danger">
+            <strong>${{total_monthly_budget_left| floatformat:2}}</p></strong>
+            </div>
+            </p>
+            {% endif %}
           </div>
       </div>
 
@@ -67,12 +81,25 @@
         <tr>
         <td>{{ budget.category }}</td>
         <td>${{ budget.budget_amount | floatformat:2 }}</td>
-        <td>{% if   budget.monthly_spend >= 0 %} ${{ budget.monthly_spend|floatformat:2 }}
+        <td>{% if budget.monthly_spend >= 0 %} ${{ budget.monthly_spend|floatformat:2 }}
             {% elif budget.monthly_spend <  0 %} <div class="text-danger">${{ budget.monthly_spend|floatformat:2|cut:"-" }}</div>
             {% endif %}
         </td>
-        <td>${{ budget.total_left | floatformat:2 }}
-        <td> <a class = "btn btn-warning" href="{%url "budgettracker-update" budget.id%}">Update</a> <a class = "btn btn-danger" href="{%url "budgettracker-delete" budget.id%}">Delete</a></td>
+         <td> 
+         <div class="text-center">
+         ${{ budget.total_left | floatformat:2 }}<br/>
+       <small>
+          	{% if budget.total_percent_left <= 20 %}
+          <div class="text-danger"><strong>{{ budget.total_percent_left | floatformat:2 }}% </strong></div>
+          {% elif budget.total_percent_left > 20 and budget.total_percent_left <= 80  %}
+            <div class="text-success"><strong>{{ budget.total_percent_left | floatformat:2 }}% </strong></div>
+          {% else %}
+            <div class="text-primary"><strong>{{ budget.total_percent_left | floatformat:2 }}% </strong></div>
+
+     	{% endif %}
+          	remaining</small>
+          	</div>
+         </td>        <td> <a class = "btn btn-warning" href="{%url "budgettracker-update" budget.id%}">Update</a> <a class = "btn btn-danger" href="{%url "budgettracker-delete" budget.id%}">Delete</a></td>
 
        </tr>
     {% endfor %}
