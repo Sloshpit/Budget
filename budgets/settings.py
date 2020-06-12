@@ -49,6 +49,7 @@ INSTALLED_APPS = [
     'crispy_forms',
     'django_tables2',
     'django.contrib.humanize',
+    'django_filters',
 
 ]
 
@@ -61,6 +62,8 @@ MIDDLEWARE = [
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
 ]
+
+MIDDLEWARE += ('crum.CurrentRequestUserMiddleware',)
 
 ROOT_URLCONF = 'budgets.urls'
 

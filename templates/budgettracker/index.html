@@ -13,7 +13,7 @@
           <div class="col-md-4">
          <div class="card">
             <div class="card-body">
-            <h5 class="card-title">Budget left this month</h5>
+            <h5 class="card-title">Amount of money not allocated to a budget:</h5>
             <p class="card-text">$ {{total_budget_left| floatformat:2}}</p>
         </div>
       </div>
@@ -21,8 +21,16 @@
         <div class="col-md-4">
            <div class="card" >
             <div class="card-body">
-            <h5 class="card-title">Budget spend this month</h5>
-            <p class="card-text">{{total_monthly_budget_percentage| floatformat:2}}%</p>
+            <h5 class="card-title">Spend this month so far:</h5>
+            	{% if total_monthly_budget_percentage <= 20 %}
+               <p class="card-text text-primary"><strong>{{total_monthly_budget_percentage| floatformat:2}}%</strong></p>
+               {% elif total_monthly_budget_percentage > 20 and total_monthly_budget_percentage < 80 %}
+              <p class="card-text text-success"><strong>{{total_monthly_budget_percentage| floatformat:2}}%</strong></p>
+            {% else %}
+                <p class="card-text danger"><strong>{{total_monthly_budget_percentage| floatformat:2}}%</strong></p>
+            {% endif %}
+              <p class="small text-center"><strong><i>*Excludes savings and investment money budgeted</i></strong></p>
+
           </div>
       </div>
 
@@ -30,13 +38,13 @@
           <div class="col-md-4">
            <div class="card" >
             <div class="card-body">
-            <h5 class="card-title">You can still spend</h5>
+            <h5 class="card-title">You can still spend:</h5>
             <p class="card-text">
             {% if total_monthly_budget_percentage <= 50 %}
             <div class="text-success">
             <strong>${{total_monthly_budget_left| floatformat:2}}</strong>
             </div>
-            {% elif total_monthly_budget_percentage > 50 <= 80 %}
+            {% elif total_monthly_budget_percentage > 50 and total_monthly_budget_percentage <= 80 %}
             <div class="text-warning">
             <strong>${{ total_monthly_budget_left| floatformat:2 }}</strong>
             </div>
@@ -46,6 +54,8 @@
             </div>
             </p>
             {% endif %}
+           <p class="small text-center"><strong><i>*Excludes savings and investment money budgeted</i></strong></p>
+
           </div>
       </div>
 

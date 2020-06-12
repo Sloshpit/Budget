@@ -18,6 +18,7 @@ class CategoryForm(forms.ModelForm):
          master_category = cleaned_data['master_category']
          category = cleaned_data['category']  
          carry_over = cleaned_data['carry_over']
+         savings_or_investment = cleaned_data['savings_or_investment']         
          check = Category.objects.filter( user=self.user, category = category)
          if Category.objects.filter(user=self.user, category = category).exists():
             raise forms.ValidationError(
@@ -39,6 +40,7 @@ class UpdateCategoryForm(forms.ModelForm):
          master_category = cleaned_data['master_category']
          category = cleaned_data['category']  
          carry_over = cleaned_data['carry_over']
+         savings_or_investment = cleaned_data['savings_or_investment']
 #         check = Category.objects.filter( user=self.user, category = category)
  #        if Category.objects.filter(user=self.user, category = category).exists():
   #          raise forms.ValidationError(

@@ -30,7 +30,7 @@ def index(request):
     today = datetime.today()
     enddate = get_last_of_month (today)
     startdate = get_first_of_month(today)
-    show_transactions = Transaction.objects.filter(user=request.user)
+    show_transactions = Transaction.objects.filter(user=request.user).order_by('-trans_date')
     total = Transaction.objects.filter(trans_date__range=[startdate, enddate], user=request.user).aggregate(sum=Sum('amount'))['sum'] or 0.00
     total = "{:.2f}".format(total)
 
@@ -140,7 +140,7 @@ class TransactionCreate (LoginRequiredMixin, CreateView):
         next_first_of_month = get_first_of_next_month(trans_date)
  #get all transactions for this month, get the budget for the category, do the math on that category
         transaction_spend = Transaction.objects.filter(category__category = category, trans_date__range = [first_of_month, trans_date], user=self.request.user).aggregate(sum=Sum('amount'))['sum'] or 0.00
-        print ('transaction spend so far:')
+        print ('transaction spend so far--------------:')
         print (transaction_spend)
         category_budget = BudgetTracker.objects.filter(category__category = category, date__range = [first_of_month, trans_date], user=self.request.user)
 
@@ -153,12 +153,13 @@ class TransactionCreate (LoginRequiredMixin, CreateView):
              spend.monthly_spend = transaction_spend
              print (spend.monthly_spend)
              spend.save()
+
         category_budget = BudgetTracker.objects.filter(category__category = category, date = next_first_of_month, user=self.request.user)
         print ('category_budget next month:')
         print (category_budget)
         for budget in category_budget:
             print (budget.budget_amount)
-            budget.budget_amount =  budget.budget_amount + transaction_spend
+            budget.budget_amount =  budget.budget_amount +  amount
             budget.save()      
         print ('-------end of create Transaction class')             
         return super().form_valid(form)

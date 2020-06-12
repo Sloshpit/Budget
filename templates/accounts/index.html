@@ -19,7 +19,7 @@
 {% if latest_account %}
     {% for account in  latest_account  %}
         <tr>
-        <td><a href="/accounts/show-transactions?account={{account.account__account_name}}">{{account.account__account_name}}</a></td>
+        <td><a href="/accounthistory/accountfilter?account={{account.account__id}}">{{account.account__account_name}}</a></td>
         <td>{{account.balance_date| date:'F d Y'}}</td>
         <td>${{ account.balance|floatformat:2 }}</td>
     {% endfor %}

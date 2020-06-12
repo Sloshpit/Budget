@@ -99,8 +99,9 @@ def get_monthly_budget (start_month, request):
     #get all refund/income transactions
     first_of_month = get_first_of_month(start_month)
     last_of_month = get_last_of_month(start_month)
+    print ('----some date start month')
+    print (start_month)
     first_of_last_month = get_first_of_last_month(start_month)
-
     last_of_last_month = get_last_of_last_month(start_month)
     first_of_next_month = get_first_of_next_month(start_month)
 
@@ -128,16 +129,28 @@ def get_monthly_budget (start_month, request):
     #budget_left = transaction_income_this_month+transaction_initial_balance_this_month - budget_this_month + transaction_income_prev_month + transaction_initial_balance_prev_month + (budget_last_month - budget_spend_last_month)
     budget_left_this_month = transaction_income_this_month + transaction_initial_balance_this_month - budget_this_month
     budget_left_from_last_month = transaction_income_prev_month +transaction_initial_balance_prev_month + budget_spend_last_month
-
+    print (first_of_last_month)
+    print (last_of_last_month)
+    money_left_from_last_month = Transaction.objects.filter( user=request.user, trans_date__range=[first_of_last_month, last_of_last_month]).aggregate(sum=Sum('amount'))['sum'] or 0.00
+    print ('-----money left from last month')
+    print (money_left_from_last_month)
     total_budget_left = budget_left_this_month + budget_left_from_last_month
 
     # total_budget_left = float(initial_balance) + float(income) - float(total_spend)-float(budget_total)
     total_monthly_spend = BudgetTracker.objects.filter(date__range=[startdate,enddate], user=request.user)
 
-    total_monthly_budget_left = budget_total + total_spend
+    #savings_investment_budget = BudgetTracker.objects.filter (date_range=[startdate, enddate],user=request.user, category__category__savings_or_investment=True)
+   
+    sav_inv_categories = Category.objects.filter(savings_or_investment=True)
+    for category in sav_inv_categories:
+        savings_amount = BudgetTracker.objects.filter(user=request.user, date__range=[first_of_month, last_of_month]).filter(category__category = category).aggregate(sum=Sum('budget_amount'))['sum'] or 0.00 + savings_amount
+
+    print (savings_amount)
+  
+    total_monthly_budget_left = budget_total + total_spend - savings_amount
     print ('-------------money left')
     print (total_monthly_budget_left)
-    total_monthly_budget_percentage = (total_spend/budget_total)*-100
+    total_monthly_budget_percentage = ((total_spend-savings_amount)/budget_total)*-100
     form = GetDateForm()   
     form.fields['start_month'].label = "View budget for:"
     print ('-----budgets for selected month')
@@ -177,6 +190,7 @@ def index(request):
             # return HttpResponse((template.render(context,request)))
              return render(request, 'budgettracker/index.html',context)
     else:
+        print ('inside else of post------------')
         today = datetime.today()
         context = get_monthly_budget (today, request)
     return render(request, 'budgettracker/index.html',context)
@@ -232,27 +246,25 @@ class BudgettrackerUpdate (LoginRequiredMixin, UpdateView):
         category = form.cleaned_data['category']
         date = form.cleaned_data['date']
         budget_amount = form.cleaned_data['budget_amount']
-
-        print ('changed data')
         old_object = form.instance
-        print (old_object)
-        print (form.changed_data[0])
         form.save()
+ 
         check_carryover = Category.objects.filter(category=category, user=self.request.user)
         for check in check_carryover:
             carry_over = check.carry_over
         if carry_over== True:
+            this_month_spend = BudgetTracker.objects.filter(date=date, category=category, user=self.request.user)
+            print ('-----this month spend')
+            for spend in this_month_spend:
+              current_month_spend = spend.monthly_spend
+ 
             next_month_date = date + relativedelta(months=1)
-            print ('---------UPDATE check for future months!!')
-            print ('next month date in update:')
-            print (next_month_date)
             future_budgets = BudgetTracker.objects.filter (date__gte=date, category=category, user=self.request.user)
             for budget in future_budgets:
-                print ('----inside update for loop-------')
-                print (budget.budget_amount)
-                budget.budget_amount = budget_amount
+
+                budget_left = budget.budget_amount - budget_amount
+                budget.budget_amount = budget.budget_amount - budget_left + current_month_spend
                 budget.save()
-            print (future_budgets)
           #  next_month = BudgetTracker(date=next_month_date, category=category, budget_amount=budget_amount, user=self.request.user)
           #  next_month.save()
 
