@@ -69,9 +69,7 @@ def get_monthly_budget (start_month, request):
     budget_month = start_month.strftime("%b %Y")
     startdate = start_year+"-"+ start_mnth+ "-" + start_day
     b_f_month = BudgetTracker.objects.filter(date__range=[startdate,enddate], user=request.user).exclude(category__category=exclude_list)
-    print ('-------b_f_month---------')
-    print (b_f_month)
-    print ('--------budgets for selected month---------')
+
    # budgets_for_selected_month = b_f_month.annotate(total_left=(F('budget_amount')+F('monthly_spend'))).order_by('-budget_amount')
     budgets_for_selected_month = b_f_month.annotate(total_left=(F('budget_amount')+F('monthly_spend')), total_percent_left = ((F('monthly_spend')+F('budget_amount'))/F('budget_amount'))*100).order_by('-budget_amount')
 
@@ -92,8 +90,7 @@ def get_monthly_budget (start_month, request):
     #    get the initial balance for each record in the given month.
     initial_balance = Transaction.objects.filter(trans_date__range=[startdate,enddate], category__category="Initial Balance", user=request.user).aggregate(sum=Sum('amount'))['sum'] or 0.00
     income = Transaction.objects.filter(trans_date__range=[startdate,enddate], user=request.user, category__category="Income").aggregate(sum=Sum('amount'))['sum'] or 0.00
-    print (initial_balance)
-    print (income)
+
     total_left = float(initial_balance) + float(budget_total)
 
     #get all refund/income transactions
@@ -148,9 +145,17 @@ def get_monthly_budget (start_month, request):
     print (savings_amount)
   
     total_monthly_budget_left = budget_total + total_spend - savings_amount
+    print ('-----------------')
+    print (budget_total)
+    print (total_spend)
+    print ('------------------')
     print ('-------------money left')
     print (total_monthly_budget_left)
-    total_monthly_budget_percentage = ((total_spend-savings_amount)/budget_total)*-100
+    if total_spend != 0:
+        total_monthly_budget_percentage = ((total_spend-savings_amount)/budget_total)*-100
+    else:
+        total_monthly_budget_percentage = 0
+        
     form = GetDateForm()   
     form.fields['start_month'].label = "View budget for:"
     print ('-----budgets for selected month')
