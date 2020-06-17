@@ -19,9 +19,17 @@
 {% if latest_account %}
     {% for account in  latest_account  %}
         <tr>
-        <td><a href="/accounthistory/accountfilter?account={{account.account__id}}">{{account.account__account_name}}</a></td>
+        <td>
+           <a href="/accounthistory/accountfilter?account={{account.account__id}}">{{account.account__account_name}}</a></td>
         <td>{{account.balance_date| date:'F d Y'}}</td>
-        <td>${{ account.balance|floatformat:2 }}</td>
+        <td>{% if account.balance > 0 %} 
+                <div class="text-success">${{ account.balance|floatformat:2 }}
+               </div>
+            {% else %}   
+              <div class="text-danger">${{ account.balance|floatformat:2 }}
+               </div>
+            {% endif%}   
+        </td>
     {% endfor %}
 {% else %}
     Nothing available
