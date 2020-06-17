@@ -10,7 +10,7 @@
           <div class="mt-2"></div>
           <div class="mt-2"></div>
           <div class="row">
-          <div class="col-md-4">
+          <div class="col-md-3">
          <div class="card">
             <div class="card-body">
             <h5 class="card-title">Amount of money not allocated to a budget:</h5>
@@ -18,7 +18,7 @@
         </div>
       </div>
       </div>
-        <div class="col-md-4">
+        <div class="col-md-3">
            <div class="card" >
             <div class="card-body">
             <h5 class="card-title">Spend this month so far:</h5>
@@ -35,7 +35,7 @@
       </div>
 
       </div>
-          <div class="col-md-4">
+          <div class="col-md-3">
            <div class="card" >
             <div class="card-body">
             <h5 class="card-title">You can still spend:</h5>
@@ -54,8 +54,20 @@
             </div>
             </p>
             {% endif %}
-           <p class="small text-center"><strong><i>*Excludes savings and investment money budgeted</i></strong></p>
+           <p class="small text-center"><strong><i>*Your savings will still be there if you spend all your money here!</i></strong></p>
 
+          </div>
+      </div>
+
+      </div>
+                <div class="col-md-3">
+           <div class="card" >
+            <div class="card-body">
+            <h5 class="card-title">Savings:</h5>
+            <p class="card-text">
+            <div class="text-success">
+            <strong>${{current_savings| floatformat:2}}</strong>
+            </div>
           </div>
       </div>
 
@@ -89,7 +101,12 @@
 {% if budgets_for_selected_month %}
     {% for budget in budgets_for_selected_month %}
         <tr>
-        <td>{{ budget.category }}</td>
+        <td>{{ budget.category }}
+        {% load static %}
+        {% if budget.carryover == True %}
+        <img src="{% static "budgettracker/carry_over.jpg" %}" alt="My image">    
+        {% endif %}
+        </td>
         <td>${{ budget.budget_amount | floatformat:2 }}</td>
         <td>{% if budget.monthly_spend >= 0 %} ${{ budget.monthly_spend|floatformat:2 }}
             {% elif budget.monthly_spend <  0 %} <div class="text-danger">${{ budget.monthly_spend|floatformat:2|cut:"-" }}</div>

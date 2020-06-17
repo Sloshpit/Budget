@@ -69,9 +69,8 @@ def get_monthly_budget (start_month, request):
     budget_month = start_month.strftime("%b %Y")
     startdate = start_year+"-"+ start_mnth+ "-" + start_day
     b_f_month = BudgetTracker.objects.filter(date__range=[startdate,enddate], user=request.user).exclude(category__category=exclude_list)
-
    # budgets_for_selected_month = b_f_month.annotate(total_left=(F('budget_amount')+F('monthly_spend'))).order_by('-budget_amount')
-    budgets_for_selected_month = b_f_month.annotate(total_left=(F('budget_amount')+F('monthly_spend')), total_percent_left = ((F('monthly_spend')+F('budget_amount'))/F('budget_amount'))*100).order_by('-budget_amount')
+    budgets_for_selected_month = b_f_month.annotate(total_left=(F('budget_amount')+F('monthly_spend')), carryover = (F('category__carry_over')), total_percent_left = ((F('monthly_spend')+F('budget_amount'))/F('budget_amount'))*100).order_by('-budget_amount')
 
     print (budgets_for_selected_month)
    # budgets_for_selected_month = BudgetTracker.objects.filter(date__range=[startdate,enddate], user=request.user).exclude(category__category=exclude_list).annotate(total_left=(F('budget_amount')+F('monthly_spend'))).order_by('-budget_amount')
@@ -141,16 +140,15 @@ def get_monthly_budget (start_month, request):
     sav_inv_categories = Category.objects.filter(savings_or_investment=True)
     for category in sav_inv_categories:
         savings_amount = BudgetTracker.objects.filter(user=request.user, date__range=[first_of_month, last_of_month]).filter(category__category = category).aggregate(sum=Sum('budget_amount'))['sum'] or 0.00 + savings_amount
+    #get the transaction amounts that could be savings from this month:
 
-    print (savings_amount)
+    transactions_savings_investments = Transaction.objects.filter(category__savings_or_investment=True, user=request.user, trans_date__range=[first_of_month, last_of_month]).aggregate(sum=Sum('amount'))['sum'] or 0.00
+    print ('trans savings amount')
   
-    total_monthly_budget_left = budget_total + total_spend - savings_amount
-    print ('-----------------')
-    print (budget_total)
-    print (total_spend)
-    print ('------------------')
-    print ('-------------money left')
-    print (total_monthly_budget_left)
+    total_monthly_budget_left = budget_total + total_spend - savings_amount - transactions_savings_investments
+
+    current_savings = savings_amount + transactions_savings_investments
+    
     if total_spend != 0:
         total_monthly_budget_percentage = ((total_spend-savings_amount)/budget_total)*-100
     else:
@@ -170,6 +168,7 @@ def get_monthly_budget (start_month, request):
     'total_budget_left' : total_budget_left,
     'total_monthly_budget_left': total_monthly_budget_left,
     'total_monthly_budget_percentage': total_monthly_budget_percentage,
+    'current_savings' : current_savings,
     }
     return (context)
 
