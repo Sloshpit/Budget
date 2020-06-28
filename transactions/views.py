@@ -194,8 +194,14 @@ class TransactionUpdate (LoginRequiredMixin, UpdateView):
         print (amount)
         print (self.object.amount)
         if amount < 0:
+            print ('less than zero amount')
             amount = amount *-1        
-        amount_difference = amount + self.object.amount
+            amount_difference = amount + self.object.amount
+        else:
+            print ('greater than zero amount')
+            amount_difference = self.object.amount - amount
+
+        print ('--------amount difference------')
         print (amount_difference)
         trans_date = form.cleaned_data['trans_date']
         trans_date_no_time_string = str(trans_date.year)+'-' + str(trans_date.month) + '-'+ str(trans_date.day)

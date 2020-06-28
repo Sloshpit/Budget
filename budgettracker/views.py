@@ -136,7 +136,7 @@ def get_monthly_budget (start_month, request):
     total_monthly_spend = BudgetTracker.objects.filter(date__range=[startdate,enddate], user=request.user)
 
     #savings_investment_budget = BudgetTracker.objects.filter (date_range=[startdate, enddate],user=request.user, category__category__savings_or_investment=True)
-   
+    savings_amount = 0
     sav_inv_categories = Category.objects.filter(savings_or_investment=True)
     for category in sav_inv_categories:
         savings_amount = BudgetTracker.objects.filter(user=request.user, date__range=[first_of_month, last_of_month]).filter(category__category = category).aggregate(sum=Sum('budget_amount'))['sum'] or 0.00 + savings_amount
