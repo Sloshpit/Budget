@@ -142,6 +142,7 @@ class TransactionCreate (LoginRequiredMixin, CreateView):
         transaction_spend = Transaction.objects.filter(category__category = category, trans_date__range = [first_of_month, trans_date], user=self.request.user).aggregate(sum=Sum('amount'))['sum'] or 0.00
         print ('transaction spend so far--------------:')
         print (transaction_spend)
+
         category_budget = BudgetTracker.objects.filter(category__category = category, date__range = [first_of_month, trans_date], user=self.request.user)
 
         #category_spend = budget_amount - transaction_spend
@@ -153,14 +154,30 @@ class TransactionCreate (LoginRequiredMixin, CreateView):
              spend.monthly_spend = transaction_spend
              print (spend.monthly_spend)
              spend.save()
+        
+        check_category_carryover = Category.objects.filter(category=category, user=self.request.user).values('carry_over')
+        print ('check_category_carryover-------')
+        print (category)
+        print (check_category_carryover)
+        if check_category_carryover:
+            category_budget_next = BudgetTracker.objects.filter(category__category = category, date = next_first_of_month, user=self.request.user)
+            # if a budget doesn't exist for a category budget then create a new one
+            if not category_budget_next:
+                #get current month budget amount
+                #
+                print ('category_budget next month:')
+                print (category_budget)
 
-        category_budget = BudgetTracker.objects.filter(category__category = category, date = next_first_of_month, user=self.request.user)
-        print ('category_budget next month:')
-        print (category_budget)
-        for budget in category_budget:
-            print (budget.budget_amount)
-            budget.budget_amount =  budget.budget_amount +  amount
-            budget.save()      
+                for budget in category_budget:
+                    budget_current_month = budget.budget_amount + amount
+                    BudgetTracker.objects.create(category=budget.category, date = next_first_of_month, user=self.request.user, budget_amount=budget_current_month)
+            # otherwise update the next month budget
+            else:
+                for budget in category_budget:
+                    print (budget.budget_amount)
+                    budget.budget_amount =  budget.budget_amount +  amount
+                    budget.save()      
+
         print ('-------end of create Transaction class')             
         return super().form_valid(form)
 
