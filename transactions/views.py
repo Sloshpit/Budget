@@ -78,15 +78,15 @@ class TransactionCreate (LoginRequiredMixin, CreateView):
         #create a category budget for a transaction if it does not exist
         print ('category before if or statement:')
         print (category)
-        if (str(category) != 'Income' and str(category) !='Initial Balance'):
-            print ('--------inside not!!!!!!!!!--------')
-            if not BudgetTracker.objects.filter(date=bud_date, user=self.request.user, category__category=category).exists():
-                budget_does_not_exist = 'Create a budget for this category before adding a transaction'
-                bud_amount = amount
-                if amount < 0:
-                    bud_amount = bud_amount *-1
-                new_budget = BudgetTracker(category=category, budget_amount = bud_amount, monthly_spend = '0', date = bud_date, user=self.request.user)
-                new_budget.save()
+ #       if (str(category) != 'Income' and str(category) !='Initial Balance'):
+ #           print ('--------inside not!!!!!!!!!--------')
+ #           if not BudgetTracker.objects.filter(date=bud_date, user=self.request.user, category__category=category).exists():
+ #               budget_does_not_exist = 'Create a budget for this category before adding a transaction'
+ #               bud_amount = amount
+ #               if amount < 0:
+ #                   bud_amount = bud_amount *-1
+ #               new_budget = BudgetTracker(category=category, budget_amount = bud_amount, monthly_spend = '0', date = bud_date, user=self.request.user)
+ #               new_budget.save()
         # get the latest account balance based on the transaction date.  This should account for a present record and going into the past.
 
         #latest_account = AccountBalance.objects.filter(account__account_name=acct_name).values('account__account_name', 'balance', 'balance_date').latest('balance_date')
@@ -173,10 +173,10 @@ class TransactionCreate (LoginRequiredMixin, CreateView):
                     BudgetTracker.objects.create(category=budget.category, date = next_first_of_month, user=self.request.user, budget_amount=budget_current_month)
             # otherwise update the next month budget
             else:
-                for budget in category_budget:
-                    print (budget.budget_amount)
-                    budget.budget_amount =  budget.budget_amount +  amount
-                    budget.save()      
+                for budget in category_budget_next:
+                     print (budget.monthly_spend)
+                     budget.budget_amount =  budget.budget_amount +  amount
+                     budget.save()      
 
         print ('-------end of create Transaction class')             
         return super().form_valid(form)
@@ -293,15 +293,21 @@ class TransactionDelete (LoginRequiredMixin, DeleteView):
 #        trans_date = form.cleaned_data['trans_date']
         trans_date_no_time_string = str(trans_date.year)+'-' + str(trans_date.month) + '-'+ str(trans_date.day)
         trans_date_no_time = trans_date.date()        
+        print ('----transactiondate no time')
         print (trans_date_no_time)
 
 
  #   account_record_to_delete = AccountBalance.objects.filter(account__user=user,balance_date=trans_date, account=acct_name).delete()
-        records_to_update = AccountBalance.objects.filter(account__user=user, account=acct_name, balance_date__gte=trans_date_no_time, balance_date__lte = today)       
+        print ('----SUER a')
+        print (user)
+        print (acct_name)
+        records_to_update = AccountBalance.objects.filter(account__user=user, account=acct_name, balance_date__range=[trans_date_no_time, today])       
         acct_hist_records_to_update = AccountHistory.objects.filter(user=user, account=acct_name, date__gt=trans_date, date__lte = today)
         print ('records to update')
         print (records_to_update)
         for record in records_to_update:
+            print ('-----record balance')
+            print (record.balance)
             record.balance = record.balance - amount
             print (amount)
             print (record.balance)
