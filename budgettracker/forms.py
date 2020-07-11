@@ -19,7 +19,7 @@ class CreateBudget(forms.ModelForm):
         exclude =('user','monthly_spend')
         #fields='__all__'
         widgets = {
-            'date': MonthPickerInput(), # default date-format %m/%d/%Y will be used
+            'date': MonthPickerInput().start_of('2020-10-01'), # default date-format %m/%d/%Y will be used
         }
   
     def __init__(self, *args, logged_user_id=None, **kwargs):

@@ -12,7 +12,7 @@ from django.contrib.auth.mixins import LoginRequiredMixin
 @login_required
 def index(request):
     template = loader.get_template('categories/index.html')
-    show_categories = Category.objects.filter(user=request.user)
+    show_categories = Category.objects.filter(user=request.user).order_by('category')
     show_transactions = Transaction.objects.all()
     total = Transaction.objects.filter(user=request.user).aggregate(sum=Sum('amount'))['sum'] or 0.00
     total = "{:.2f}".format(total)

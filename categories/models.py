@@ -8,6 +8,8 @@ class Category(models.Model):
     carry_over = models.BooleanField (default=False)
     savings_or_investment = models.BooleanField (default=False)
 
+    class Meta:
+        ordering = ["category"]
     def __str__(self):
         return self.category
     def get_absolute_url(self):

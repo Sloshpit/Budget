@@ -51,22 +51,22 @@ def get_cat_budget(request):
     return JsonResponse({'data':previous_budget})
 
 def get_monthly_budget (start_month, request):
-    template = loader.get_template ('budgettracker/index.html')
-    #do all the date stuff
-
     today = str(date.today())
-
+    print (start_month)
+    convert_month = datetime.strftime(start_month, '%b %Y')
     num_days = monthrange(start_month.year, start_month.month)
     exclude_list = ['Initial Balance', 'Income']             
     enddate = (start_month.year, start_month.month, num_days[1])
     end_year = str(enddate[0])
     end_month = str(enddate[1])
     end_day = str(enddate[2])
-    enddate = end_year+"-"+ end_month+ "-" + end_day        
+    enddate = end_year+"-"+ end_month+ "-" + end_day
+            
     first_day = (start_month.year, start_month.month, 1)
     start_year = str(first_day[0])
     start_mnth = str(first_day[1])
     start_day = str(first_day[2])
+    budget_month = start_month.strftime("%b %Y")
     startdate = start_year+"-"+ start_mnth+ "-" + start_day
     budget_month = startdate
     first_of_month = get_first_of_month(start_month)
@@ -74,20 +74,28 @@ def get_monthly_budget (start_month, request):
     first_of_last_month = get_first_of_last_month(start_month)
     last_of_last_month = get_last_of_last_month(start_month)
     first_of_next_month = get_first_of_next_month(start_month)
-    last_of_next_month = get_last_of_next_month(start_month)
-    #get the records from this month and the last month
+
     b_f_month = BudgetTracker.objects.filter(date__range=[startdate,enddate], user=request.user).exclude(category__category=exclude_list)
     b_f_last_month = BudgetTracker.objects.filter(date__range=[first_of_last_month,last_of_last_month], user=request.user).exclude(category__category=exclude_list)
 
-    #b_f_next_month = BudgetTracker.objects.filter(date__range=[first_of_next_month,last_of_next_month], user=request.user).exclude(category__category=exclude_list)
-    #print ('----budget for next month----')
-    #print (b_f_next_month)
-    #if not b_f_next_month:
-    #    print ('empty query set yo!')
-    #calculate in the total money left and percentage left to show in table
+    b_f_next_month_carryover = BudgetTracker.objects.filter (date = first_of_next_month, user=request.user, category__carry_over = True).exclude(category__category=exclude_list)
+    b_f_month_carryover = BudgetTracker.objects.filter (date = first_of_month, user=request.user, category__carry_over = True).exclude(category__category=exclude_list)
+
+    for budget in b_f_month_carryover:
+        record_found = False
+        for bud in b_f_next_month_carryover:
+                if budget.category == bud.category:
+                    record_found = True
+
+        if not record_found:
+            BudgetTracker.objects.create(date= first_of_next_month, user=request.user, category=budget.category, budget_amount = budget.budget_amount, monthly_spend = 0)
+
     budgets_for_selected_month = b_f_month.annotate(total_left=(F('budget_amount')+F('monthly_spend')), carryover = (F('category__carry_over')), total_percent_left = ((F('monthly_spend')+F('budget_amount'))/F('budget_amount'))*100).order_by('-budget_amount')
-    
+    print ('budgets for selected month')
+    print (budgets_for_selected_month)
     budget_list = []
+
+
     for budget in budgets_for_selected_month:
         last_month_spend = 0
         for bud in b_f_last_month:
@@ -97,38 +105,117 @@ def get_monthly_budget (start_month, request):
                 else:
                     last_month_spend = 0    
         budget_list.append([budget.category, budget.budget_amount, budget.monthly_spend, budget.total_left, budget.carryover, budget.total_percent_left, last_month_spend, budget.id])
+        print ('----budget.budget_amount')
+        print (budget.budget_amount)
         last_month_spend = 0
- 
-    #total budgeted this month
+   # budgets_for_selected_month = BudgetTracker.objects.filter(date__range=[startdate,enddate], user=request.user).exclude(category__category=exclude_list).annotate(total_left=(F('budget_amount')+F('monthly_spend'))).order_by('-budget_amount')
     budget_total =  BudgetTracker.objects.filter(date__range=[startdate,enddate], user=request.user).aggregate(sum=Sum('budget_amount'))['sum'] or 0.00
-    #total spend this month
     total_spend =  BudgetTracker.objects.filter(date__range=[startdate,enddate], user=request.user).aggregate(sum=Sum('monthly_spend'))['sum'] or 0.00
-    #get savings and investment categories - don't include in spend calculation
-    sav_inv_categories = Category.objects.filter(savings_or_investment=True)
+
+    account_names = Account.objects.filter(user=request.user).values('account_name').distinct()
+
+    total_account_balance = 0
+    for acct_name in account_names:
+        latest_account_balance = AccountBalance.objects.filter(account__account_name=acct_name['account_name'], account__user=request.user).latest('balance_date')
+        total_account_balance = total_account_balance + latest_account_balance.balance
+
+    #    get the initial balance for each record in the given month.
+    initial_balance = Transaction.objects.filter(trans_date__range=[startdate,enddate], category__category="Initial Balance", user=request.user).aggregate(sum=Sum('amount'))['sum'] or 0.00
+    income = Transaction.objects.filter(trans_date__range=[startdate,enddate], user=request.user, category__category="Income").aggregate(sum=Sum('amount'))['sum'] or 0.00
+
+    total_left = float(initial_balance) + float(budget_total)
+
+    #get all refund/income transactions
+    first_of_month = get_first_of_month(start_month)
+    last_of_month = get_last_of_month(start_month)
+    first_of_last_month = get_first_of_last_month(start_month)
+    last_of_last_month = get_last_of_last_month(start_month)
+    first_of_next_month = get_first_of_next_month(start_month)
+
+    template = loader.get_template ('budgettracker/index.html')
+    #transaction and income from last month
+    transaction_income_prev_month = Transaction.objects.filter(category__category='Income', user=request.user, trans_date__range=[first_of_last_month, last_of_last_month]).aggregate(sum=Sum('amount'))['sum'] or 0.00
+    transaction_initial_balance_prev_month = Transaction.objects.filter(category__category='Initial Balance', user=request.user, trans_date__range=[first_of_last_month, last_of_last_month]).aggregate(sum=Sum('amount'))['sum'] or 0.00
+    #money left from last month (budget - spend)
+    
+    budget_last_month = BudgetTracker.objects.filter(user=request.user, date__range=[first_of_last_month, last_of_last_month]).exclude(category__category = exclude_list).aggregate(sum=Sum('budget_amount'))['sum'] or 0.00
+
+    budget_this_month = BudgetTracker.objects.filter(user=request.user, date__range=[first_of_month, last_of_month]).exclude(category__category = exclude_list).aggregate(sum=Sum('budget_amount'))['sum'] or 0.00
+    budget_spend_last_month = BudgetTracker.objects.filter(user=request.user, date__range=[first_of_last_month, last_of_last_month]).exclude(category__category = exclude_list).aggregate(sum=Sum('monthly_spend'))['sum'] or 0.00   
+    #income for this month
+    transaction_income_this_month = Transaction.objects.filter(category__category = 'Income', user=request.user, trans_date__range=[first_of_month, last_of_month]).aggregate(sum=Sum('amount'))['sum'] or 0.00
+ 
+    transaction_initial_balance_this_month = Transaction.objects.filter( category__category = 'Initial Balance', user=request.user, trans_date__range=[first_of_month,last_of_month]).aggregate(sum=Sum('amount'))['sum'] or 0.00
+    #carry over money left
+    non_carry_over_budget_last_month = BudgetTracker.objects.filter(user=request.user, date__range=[first_of_last_month, last_of_last_month]).exclude(category__category = exclude_list).aggregate(sum=Sum('budget_amount'))['sum'] or 0.00
+    non_carry_over_budget_spend_last_month = BudgetTracker.objects.filter(user=request.user, date__range=[first_of_last_month, last_of_last_month]).exclude(category__category = exclude_list).aggregate(sum=Sum('monthly_spend'))['sum'] or 0.00    
+    
+    #calculate how much budget there is for this month:
+
+    #budget_left = transaction_income_prev_month + transaction_initial_balance_prev_month-(budget_last_month - budget_spend_last_month) + transaction_income_this_month + transaction_initial_balance_this_month - budget_this_month
+    #budget_left = transaction_income_this_month+transaction_initial_balance_this_month - budget_this_month + transaction_income_prev_month + transaction_initial_balance_prev_month + (budget_last_month - budget_spend_last_month)
+    budget_left_this_month = transaction_income_this_month + transaction_initial_balance_this_month - budget_this_month
+    all_transactions_to_this_month = Transaction.objects.filter(user=request.user, trans_date__lte=last_of_last_month).aggregate(sum=Sum('amount'))['sum'] or 0.00
+    budget_spend_this_month = BudgetTracker.objects.filter(user=request.user, date__range=[first_of_month, last_of_month]).exclude(category__category = exclude_list).aggregate(sum=Sum('monthly_spend'))['sum'] or 0.00   
+
+    transaction_initial_balance_past = Transaction.objects.filter(category__category='Initial Balance', user=request.user, trans_date__lte=last_of_last_month).aggregate(sum=Sum('amount'))['sum'] or 0.00
+    transaction_income_past = Transaction.objects.filter(category__category='Income', user=request.user, trans_date__lte=last_of_last_month).aggregate(sum=Sum('amount'))['sum'] or 0.00
+   
+    income_this_month = transaction_income_this_month + transaction_initial_balance_this_month
+    income_from_past = transaction_initial_balance_past + transaction_income_past 
+    
+    print ('############################')
+    print (income_this_month)
+    print (income_from_past)
+    print (budget_this_month)
+    
+    left_to_budget = all_transactions_to_this_month - budget_this_month + transaction_income_this_month +  transaction_initial_balance_this_month
+    print ('-------------------------------')
+    print (all_transactions_to_this_month)
+    print (budget_this_month)
+    print ( transaction_income_this_month)
+    print (transaction_initial_balance_this_month)
+    print (left_to_budget)
+    print ('-----all transactions----')
+    print (all_transactions_to_this_month)
+    all_budget_spend_to_this_month = BudgetTracker.objects.filter(user=request.user, date__lte=last_of_last_month).exclude(category__category = exclude_list).aggregate(sum=Sum('monthly_spend'))['sum'] or 0.00   
+    budget_left_from_last_month = transaction_income_prev_month +transaction_initial_balance_prev_month + budget_spend_last_month
+    budget_left_from_all_prev_months = all_transactions_to_this_month + all_budget_spend_to_this_month
+    print (first_of_last_month)
+    print (last_of_last_month)
+    money_left_from_last_month = Transaction.objects.filter( user=request.user, trans_date__range=[first_of_last_month, last_of_last_month]).aggregate(sum=Sum('amount'))['sum'] or 0.00
+
+    total_budget_left = budget_left_this_month + budget_left_from_last_month
+    total_budget_left = left_to_budget
+    total_budget_left = budget_left_this_month + budget_left_from_all_prev_months
+    print ('-----budget left this month and budget left from all previous months:')
+    print (budget_left_this_month)
+    print (budget_left_from_all_prev_months)
+
+  #  total_budget_left = all_transactions_previous_months - budget_last_month + transaction_income_this_month
+    # total_budget_left = float(initial_balance) + float(income) - float(total_spend)-float(budget_total)
+    total_monthly_spend = BudgetTracker.objects.filter(date__range=[startdate,enddate], user=request.user)
+
+    #savings_investment_budget = BudgetTracker.objects.filter (date_range=[startdate, enddate],user=request.user, category__category__savings_or_investment=True)
     savings_amount = 0
+    sav_inv_categories = Category.objects.filter(savings_or_investment=True)
     for category in sav_inv_categories:
         savings_amount = BudgetTracker.objects.filter(user=request.user, date__range=[first_of_month, last_of_month]).filter(category__category = category).aggregate(sum=Sum('budget_amount'))['sum'] or 0.00 + savings_amount
+    #get the transaction amounts that could be savings from this month:
 
-    if total_spend < 0:
-        total_spend_percentage = (total_spend/(budget_total-savings_amount))*-100
-    else:
-        total_spend_percentage = 0
-        
-
-    #money left to budget
-    all_transactions_to_this_month = Transaction.objects.filter(user=request.user, trans_date__lte=last_of_last_month).aggregate(sum=Sum('amount'))['sum'] or 0.00
-    transaction_income_this_month = Transaction.objects.filter(category__category = 'Income', user=request.user, trans_date__range=[first_of_month, last_of_month]).aggregate(sum=Sum('amount'))['sum'] or 0.00 
-    transaction_initial_balance_this_month = Transaction.objects.filter( category__category = 'Initial Balance', user=request.user, trans_date__range=[first_of_month,last_of_month]).aggregate(sum=Sum('amount'))['sum'] or 0.00
     transactions_savings_investments = Transaction.objects.filter(category__savings_or_investment=True, user=request.user, trans_date__range=[first_of_month, last_of_month]).aggregate(sum=Sum('amount'))['sum'] or 0.00
-   
-    budget_this_month = BudgetTracker.objects.filter(user=request.user, date__range=[first_of_month, last_of_month]).exclude(category__category = exclude_list).aggregate(sum=Sum('budget_amount'))['sum'] or 0.00    
-    left_to_budget = all_transactions_to_this_month - budget_this_month + transaction_income_this_month +  transaction_initial_balance_this_month
+  
+    total_monthly_budget_left = budget_total + total_spend - savings_amount - transactions_savings_investments
 
-    #total money left to spend
-    money_left_to_spend = budget_total + total_spend - savings_amount - transactions_savings_investments
-    #current savings
     current_savings = savings_amount + transactions_savings_investments
-
+    print (total_spend)
+    print ('total spend---')
+    print (savings_amount)
+    print (budget_total)
+    if total_spend < 0:
+        total_monthly_budget_percentage = (total_spend/(budget_total-savings_amount))*-100
+    else:
+        total_monthly_budget_percentage = 0
         
     form = GetDateForm()   
     form.fields['start_month'].label = "View budget for:"
@@ -136,14 +223,16 @@ def get_monthly_budget (start_month, request):
     context= {
     'form': form, 
     'budgets_for_selected_month': budgets_for_selected_month,
-    'budget_list' : budget_list,
-    'budget_total' : budget_total,
-    'total_budget_left' : left_to_budget,
-    'total_spend' : total_spend,
-    'total_monthly_budget_percentage' : total_spend_percentage,
-    'total_monthly_budget_left' : money_left_to_spend,
-    'current_savings' : current_savings,
+    'total_spend' : total_spend, 
+    'total_left': total_left,
+    'budget_total': budget_total, 
     'budget_month_date' : budget_month,
+    'total_budget_left' : total_budget_left,
+    'total_monthly_budget_left': total_monthly_budget_left,
+    'total_monthly_budget_percentage': total_monthly_budget_percentage,
+    'current_savings' : current_savings,
+    'b_f_last_month' : b_f_last_month,
+    'budget_list' : budget_list,
     }
     return (context)
 
@@ -285,15 +374,6 @@ def get_budget_average (request):
     }
     return JsonResponse(data)
 
-def check_max_date (request):
-    max_date = BudgetTracker.objects.filter(user=request.user).latest('date')
-    print (max_date.date)
-  #  the_date = AccountBalance.objects.filter(account__id=account, account__user=request.user).values('balance_date').order_by('-balance_date').last()
-  #  formatted_date = (str(the_date['balance_date'].month) +'-'+str(the_date['balance_date'].day)+'-'+str(the_date['balance_date'].year))
-    data = {
-        'date': max_date.date
-            }
-    return JsonResponse(data)
 
 class BudgetListView (SingleTableView):
     model = BudgetTracker

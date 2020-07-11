@@ -139,6 +139,8 @@
           
       </tr>
 {% endfor %}
+{% else %}
+<div class="text-danger"> There is no budget defined for this month </div>
 {% endif %}
 </tbody>
 </table>
@@ -157,9 +159,61 @@
 <p><div class="alert alert-primary"> If the spend amount is positive at the end of the month use the money to pay down something, save or enjoy something!</div></p>
 <p> <div class="alert alert-danger"> If the spend amount is negative, you have a problem and better spend somewhere else, or save less to pay your bills!</div></p>
 
+{{budget_month_date|json_script:"thedate" }}
+<script>
+$( document ).ready(function() {
+var thedate = JSON.parse(document.getElementById("thedate").innerHTML);
+//thedate = thedate.slice(0,-2)
+endofmonth = thedate.slice (-4)
+console.log(endofmonth)
+if (endofmonth.indexOf('-'),0==0)
+  {
+    thedate = thedate.slice(0,5)+'0'+thedate.slice(-3)
+    console.log(thedate)
+    console.log ('in if');
+  }
 
+endofday = thedate.slice (-2)
+console.log(endofday)
+if (endofday.indexOf('-'),0==0)
+{
+  thedate= thedate.slice(0,8)+'0'+ thedate.slice(-1);
+  console.log(thedate)
+}
+//console.log(firstcharacter)
+//console.log (endofdate)
+
+//console.log(thedate)
+  //$('#id_start_month').data("DateTimePicker").minDate(data.thedate);
+  $('#id_start_month').val(thedate);
+ // console.log (thedate);
+  //var dt = new Date(thedate +"EDT");
+ // console.log (dt);
+       $.ajax({
+         url: 'ajax/check_max_date',
+         success: function (data){
+         console.log('data date');
+         console.log(data);
+         dt = new Date(data);
+   //    $('#id_trans_date').data("DateTimePicker").maxDate(dt);
+  //  $('#id_trans_date').datetimepicker({
+  //    format: 'YYYY-MM-DD',
+  //    maxDate: dt,
+  //    minDate: '2020-06-01'
+   // });
+ $('#id_trans_date').datetimepicker({
+  format:'YYYY-MM-DD',
+  maxDate: data
+});
+         }
+       });    
+});
+  
+    
+</script>
 
 {% endblock %}
    </div>
 </div>
 </div>
+

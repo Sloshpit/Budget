@@ -44,6 +44,7 @@
       console.log ('change')
        var category = $('#id_category').find('option:selected').text();
        var date = $('#id_trans_date').val();
+       console.log(date)
        $.ajax({
          url: 'ajax/category_budget_check',
          data:{
