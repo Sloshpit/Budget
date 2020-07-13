@@ -69,6 +69,8 @@ def get_monthly_budget (start_month, request):
     start_day = str(first_day[2])
     startdate = start_year+"-"+ start_mnth+ "-" + start_day
     budget_month = startdate
+    budget_month_human = start_month.strftime("%B %Y")
+
     first_of_month = get_first_of_month(start_month)
     last_of_month = get_last_of_month(start_month)
     first_of_last_month = get_first_of_last_month(start_month)
@@ -131,7 +133,7 @@ def get_monthly_budget (start_month, request):
 
         
     form = GetDateForm()   
-    form.fields['start_month'].label = "View budget for:"
+    form.fields['start_month'].label = "View budget For:"
 
     context= {
     'form': form, 
@@ -144,6 +146,7 @@ def get_monthly_budget (start_month, request):
     'total_monthly_budget_left' : money_left_to_spend,
     'current_savings' : current_savings,
     'budget_month_date' : budget_month,
+    'budget_month_human' : budget_month_human,
     }
     return (context)
 

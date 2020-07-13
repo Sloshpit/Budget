@@ -1,53 +1,48 @@
 {% extends 'base.html' %}
 {% block content %}
-<div class="container">
-      <div class="row justify-content-center">
-          <h1 class="mt-2">Transactions for the current month</h1>
+   <h1 class="text-center text-md-left font-weight-lighter p-0 mt-2"> All Transactions</h1>
+      <div class="d-flex">
+         <div class="p-2"><a class = "btn btn-success" href="{%url "transaction-add"%}">Add a transaction</a></div>
+      </div>
+      <div class="mt-2"></div>
 
-<div class="d-flex flex-row-reverse">
-    <div class="p-2"><a class = "btn btn-success" href="{%url "transaction-add"%}">Add a transaction</a></div>
-</div>
-<div class="mt-2"></div>
-<table class="table  table-bordered">
-<thead>
-<tr>
-<th scope="col">Store</th>
-<th scope="col">Category</th>
-<th scope="col">Category Name</th>
-<th scope="col">Amount</th>
-<th scope="col">Transaction Date</th>
-<th scope="col">Account</th>
-<th scope="col">Manage</th>
+      <table class="table table-bordered bg-white">
+         <thead>
+             <tr>
+                  <th scope="col">Store</th>
+                  <th scope="col">Category</th>
+                  <th scope="col">Category Name</th>
+                  <th scope="col">Amount</th>
+                  <th scope="col">Transaction Date</th>
+                  <th scope="col">Account</th>
+                  <th scope="col">Manage</th>
+            </tr>      
+         </thead>
 
-</thead>
+         <tbody>
+            {% if show_transactions %}
+               {% for transaction in show_transactions %}
+               <tr>
+                 <td>{{ transaction.store }}</td>
+                 <td> <a href="{%url "category-details" transaction.category_id%}">{{transaction.category}}</a></td>        
+                 <td>{{ transaction.description }}</td>
+                 <td>
+                    {% if   transaction.amount > 0  %}
+                        <div class="text-success">${{ transaction.amount | floatformat:2 }}</div>
+                    {% else %}
+                        <div class="text-danger"> ${{ transaction.amount|floatformat:2|cut:"-" }}   
+                    {% endif %}   
+                </td>
+                <td>{{ transaction.trans_date }}</td>
+                <td>{{ transaction.account_name }}</td>
 
-<tbody>
-{% if show_transactions %}
-    {% for transaction in show_transactions %}
-        <tr>
-        <td>{{ transaction.store }}</td>
-        <td> <a href="{%url "category-details" transaction.category_id%}">{{transaction.category}}</a></td>        
-        <td>{{ transaction.description }}</td>
-        <td>
-        {% if   transaction.amount > 0  %}
-           <div class="text-success">${{ transaction.amount | floatformat:2 }}</div>
-        {% else %}
-           <div class="text-danger"> ${{ transaction.amount|floatformat:2|cut:"-" }}   
-        {% endif %}   
-           </td>
-        <td>{{ transaction.trans_date }}</td>
-        <td>{{ transaction.account_name }}</td>
+                <td><a class = "btn btn-danger" href="{%url "transaction-delete" transaction.id%}">Delete</a> <a class = "btn btn-warning" href="{%url "transaction-update" transaction.id%}">Update</a></td>
+             </tr>
+            {% endfor %}
+            {% else %}
+          Nothing available
+            {% endif %}
+         </tbody>
+      </table>
 
-        <td> <a class = "btn btn-danger" href="{%url "transaction-delete" transaction.id%}">Delete</a> <a class = "btn btn-warning" href="{%url "transaction-update" transaction.id%}">Update</a></td>
-       </tr>
-    {% endfor %}
-{% else %}
-    Nothing available
-{% endif %}
-</tbody>
-</table>
-
-{% endblock %}
-   </div>
-</div>
-</div>>
+      {% endblock %}

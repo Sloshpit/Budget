@@ -137,6 +137,14 @@ USE_TZ = False
 
 USE_THOUSAND_SEPARATOR = True
 STATIC_URL = '/static/'
+
+# Add these new lines
+STATICFILES_DIRS = (
+    os.path.join(BASE_DIR, 'static'),
+)
+
+STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
+
 LOGIN_URL = '/users/login'
 LOGIN_REDIRECT_URL = '/accounts'
 LOGOUT_REDIRECT_URL = 'login'
