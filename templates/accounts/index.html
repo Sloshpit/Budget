@@ -1,14 +1,11 @@
 {% extends 'base.html' %}
 {% block content %}
-<div class="container">
-      <div class="row justify-content-center">
-        <div class="col-8">
-          <h1 class="mt-2">Account List</h1>
-<p> Here are some Accounts</p>
+            <h1 class="text-center text-md-left font-weight-lighter p-0 mt-2">Account List</h1>
+<p> Your current account holdings</p>
 
 
 
-<table class="table table-striped table-bordered">
+<table class="table table-striped table-bordered bg-white">
 <thead>
 <tr>
 <th scope="col">Account Name</th>
@@ -23,10 +20,10 @@
            <a href="/accounthistory/accountfilter?account={{account.account__id}}">{{account.account__account_name}}</a></td>
         <td>{{account.balance_date| date:'F d Y'}}</td>
         <td>{% if account.balance > 0 %} 
-                <div class="text-success">${{ account.balance|floatformat:2 }}
+                <div class="text-success">${{ account.balance|floatformat:2|cut:"-"}}
                </div>
             {% else %}   
-              <div class="text-danger">${{ account.balance|floatformat:2 }}
+              <div class="text-danger">${{ account.balance|floatformat:2|cut:"-"}}
                </div>
             {% endif%}   
         </td>
@@ -37,7 +34,7 @@
 </tbody>
 </table>
 <p><strong>Current cash in-hand: $</strong>{{total_cash|floatformat:2 }}</p>
-<p>Note: Negative balance means money is owing.  Generally loans and credit cards have a negative balance </p>
+<p>Red indicates negative balance.  Generally loans and credit cards show negative balance </p>
 </div>
 </div>
 </div>
