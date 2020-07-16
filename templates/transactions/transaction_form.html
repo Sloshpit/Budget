@@ -3,14 +3,18 @@
 {% load crispy_forms_tags %}
 
 {% block content %}
-<h1 class="text-center text-md-left font-weight-lighter p-0 mt-2">Add a new Transaction or Update a Transaction</h1>
-  <div id ="nobudget"></div>        
-  <form method="post">
+<h1 class="text-center font-weight-lighter mt-2">Add or Update a Transaction</h1>
+  <div id ="nobudget"></div>   
+  <div class="col-sm-12">
+  <div class=" row justify-content-center mb-3">
+  <form method="post" class="text-left border p-3 bg-white font-weight-lighter">
     {% csrf_token %}
     {{ form|crispy }}
     <div class="mt-2"></div>
     <button type="submit" class="btn btn-primary">Submit</button>
   </form>
+</div>
+</div>
  {% block javascript %}
   	<script>
   $(document).ready(function(){

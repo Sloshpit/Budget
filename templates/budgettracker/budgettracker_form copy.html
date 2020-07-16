@@ -5,33 +5,31 @@
 
 
 {% block content %}
-
-
+<style>
+.my-container{
+  border: 5px solid red;
+  }
+</style>
 <h1 class="text-center font-weight-lighter p-0 mt-2 ">Add a Budget</h1>
-<p>When you add a budget, once you select a category, you will see what some of your historical spend is and how much you have to budget this month.  This will help you understand what you can budget this month.</p>
 
-<div class="col-md-6 col-9  col-lg-5 col-xl-4 mx-lg-auto bg-white border p-3">
-<form method="post" class="font-weight-lighter">
-  {% csrf_token %}
-    {% for form_field in form %} 
-    <div class="row pl-3">
-      {{ form_field|as_crispy_field }}
-    </div>
-    {% endfor %} 
-    <div class="mt-2"></div> 
-    <div class="row pl-3">
-
-    <div id="average_budget"></div>
+   <div class=" d-flex justify-content-center">
+       <form method="post" class=" border p-2 bg-white font-weight-lighter">
+    {% csrf_token %}
+    {{ form|crispy }}
+    <div class="mt-2"></div>
+    <div class="d-flex justify-content-center">
+    <div id="average_budget" class="text-center my-container"> &nbsp;</div>
   </div>
-  <div class="row pl-3">
-    <button type="submit" class="btn btn-primary">Add Budget</button>
-  </div>
-  <div class="mb-2"></div> 
+    <div class="mt-2"></div>
 
-</form>
+    <button type="submit" class="btn btn-primary">Submit</button>
+
+  </form>
+  <div class="mt-3"></div>
+
 </div>
-<div class="mb-3"></div>
 
+ 
 {% block javascript %}
   	<script>
       var category = 0;
@@ -62,7 +60,6 @@
 
      
       $('#id_category').change(function(){
-        $("#average_budget").empty();
        var category = $(this).find('option:selected').text();
        var date = $('#id_date').val();
        $.ajax({
@@ -90,7 +87,7 @@
          var bud_left = budget_left.toFixed(2);
          console.log (data) 
         //$('#average_budget').appendTo('<p class="text-primary"><strong><i>Budget left this month: $'+bud_left+'</i></strong></p>'+'<p>'+'Over the last 3 months you have spent $<strong>'+avgspend+ '</strong> on the '+ category + ' category. Your average budget over the last 3 months has been <strong>$' + avgbudget +'</strong>.</p>')
-         $('#average_budget').append('<p class="text-primary"><i>Budget left this month:<strong> $'+bud_left+'</i></strong></p>'+'<ul><li> Average 3 month budget for '+ category + ': <strong>$' + avgbudget +'</strong></li><li>Your average spend has been $<strong>'+avgspend+ '</strong></li></ul>' )
+         $('#average_budget').append('<p class="text-primary"><strong><i>Budget left this month: $'+bud_left+'</i></strong></p>'+'<p>'+'Over the last 3 months you have spent $<strong>'+avgspend+ '</strong> on the '+ category + ' category. Your average budget over the last 3 months has been <strong>$' + avgbudget +'</strong>.</p>' )
        //$('<p class="text-primary"><strong><i>Budget left this month: $'+bud_left+'</i></strong></p>'+'<p>'+'Over the last 3 months you have spent $<strong>'+avgspend+ '</strong> on the '+ category + ' category. Your average budget over the last 3 months has been <strong>$' + avgbudget +'</strong>.</p>').appendTo('#average_budget')
       
          }

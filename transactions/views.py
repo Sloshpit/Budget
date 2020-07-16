@@ -49,6 +49,7 @@ class TransactionCreate (LoginRequiredMixin, CreateView):
      def get_form_kwargs(self):
         kwargs = super().get_form_kwargs()
         kwargs.update(logged_user_id=self.request.user.id)
+
         return kwargs
 
      def form_valid(self, form):

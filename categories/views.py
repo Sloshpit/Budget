@@ -43,7 +43,7 @@ class CreateCategory(LoginRequiredMixin, CreateView):
         return super().form_valid(form)
 
 class UpdateCategory(LoginRequiredMixin, UpdateView):
-     template_name = 'categories/categories_form.html'
+     template_name = 'categories/categories_form_update.html'
      form_class = UpdateCategoryForm
      success_url = reverse_lazy('categories-index') 
      model = Category

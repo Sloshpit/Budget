@@ -3,24 +3,29 @@
 {% load crispy_forms_tags %}
 
 {% block content %}
+<style>
+.my-container{border:1px red;
+}
+</style>
+
             <h1 class="text-center text-md-left font-weight-lighter p-0 mt-2">Budget Spend Tracking for  {{ budget_month_human }}</h1>
-            <div class="container bg-secondary p-3">
+            <div class="container bg-secondary p-3 my-container">
               <div class="row">
                 <div class="col-md-3 mt-1">
                  <div class="card">
                      <div class="card-body">
                         {% if total_monthly_budget_percentage <= 50 %}
-                      <h4 class="text-success mb-0">
+                      <h5 class="text-success mb-0">
                        <strong>${{total_monthly_budget_left| floatformat:2}}</strong>
-                     </h4>
+                     </h5>
                     {% elif total_monthly_budget_percentage > 50 and total_monthly_budget_percentage <= 80 %}
-                    <h4 class="text-warning">
+                    <h5 class="text-warning">
                       <strong>${{ total_monthly_budget_left| floatformat:2 }}</strong>
-                    </h4>
+                    </h5>
                     {% else %}
-                    <h4 class="text-danger">
+                    <h5 class="text-danger">
                       <strong>${{total_monthly_budget_left| floatformat:2}}</strong>
-                    </h4>
+                    </h5>
                     {% endif %}
                     <span class="small mt-0 font-weight-lighter">Spend left</span>  
                   </div>
@@ -29,13 +34,13 @@
                 <div class="col-md-3 mt-1">
                 <div class="card">
                   <div class="card-body">
-                    <h4 class="text-success mb-0 text-danger">
+                    <h5 class="text-success mb-0 text-danger">
                         <strong>
                           ${% if total_spend < 0 %}{{ total_spend|floatformat:2|slice:"1:" }} 
                             {% else %} 0.00 
                           {% endif %}
                         </strong>
-                      </h4>
+                      </h5>
                       <span class="small mt-0 font-weight-lighter">Monthly spend</span>  
                   </div>
                 </div>      
@@ -43,11 +48,11 @@
                 <div class="col-md-3 mt-1">
                  <div class="card">
                   <div class="card-body">
-                    <h4 class="mb-0">
+                    <h5 class="mb-0">
                         <strong>
                           $ {{budget_total| floatformat:2}}
                         </strong>
-                      </h4>
+                      </h5>
                       <span class="small mt-0 font-weight-lighter">Budget</span>  
                   </div>
                 </div>      
@@ -55,11 +60,11 @@
                 <div class="col-md-3 mt-1">
                 <div class="card">
                   <div class="card-body">
-                    <h4 class="mb-0 text-secondary">
+                    <h5 class="mb-0 text-secondary">
                         <strong>
                           $ {{total_budget_left| floatformat:2}}
                         </strong>
-                      </h4>
+                      </h5>
                       <span class="small mt-0 font-weight-lighter">Budget left</span>  
                   </div>
                 </div>      
