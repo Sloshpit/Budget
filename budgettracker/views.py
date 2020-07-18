@@ -50,6 +50,10 @@ def get_cat_budget(request):
     print (previous_budget)
     return JsonResponse({'data':previous_budget})
 
+def get_topfivespend(start_month, end_month, request):
+    top_spend = BudgetTracker.objects.filter(user=request.user, date__range=[start_month,end_month]).order_by('monthly_spend')[:5]
+    return top_spend
+
 def get_monthly_budget (start_month, request):
     template = loader.get_template ('budgettracker/index.html')
     #do all the date stuff
@@ -106,13 +110,16 @@ def get_monthly_budget (start_month, request):
     #total spend this month
     total_spend =  BudgetTracker.objects.filter(date__range=[startdate,enddate], user=request.user).aggregate(sum=Sum('monthly_spend'))['sum'] or 0.00
     #get savings and investment categories - don't include in spend calculation
-    sav_inv_categories = Category.objects.filter(savings_or_investment=True)
+    sav_inv_categories = Category.objects.filter(savings_or_investment=True, user=request.user)
+    print (sav_inv_categories)
     savings_amount = 0
+    total_savings_amount = 0
     for category in sav_inv_categories:
-        savings_amount = BudgetTracker.objects.filter(user=request.user, date__range=[first_of_month, last_of_month]).filter(category__category = category).aggregate(sum=Sum('budget_amount'))['sum'] or 0.00 + savings_amount
+        savings_amount = BudgetTracker.objects.filter(user=request.user, date__range=[first_of_month, last_of_month]).filter(category__category = category).aggregate(sum=Sum('budget_amount'))['sum'] or 0.00 
+        total_savings_amount = total_savings_amount + savings_amount
 
     if total_spend < 0:
-        total_spend_percentage = (total_spend/(budget_total-savings_amount))*-100
+        total_spend_percentage = (total_spend/(budget_total-total_savings_amount))*-100
     else:
         total_spend_percentage = 0
         
@@ -127,9 +134,9 @@ def get_monthly_budget (start_month, request):
     left_to_budget = all_transactions_to_this_month - budget_this_month + transaction_income_this_month +  transaction_initial_balance_this_month
 
     #total money left to spend
-    money_left_to_spend = budget_total + total_spend - savings_amount - transactions_savings_investments
+    money_left_to_spend = budget_total + total_spend - total_savings_amount - transactions_savings_investments
     #current savings
-    current_savings = savings_amount + transactions_savings_investments
+    current_savings = total_savings_amount + transactions_savings_investments
 
         
     form = GetDateForm()   
@@ -150,8 +157,6 @@ def get_monthly_budget (start_month, request):
     }
     return (context)
 
-
-
 @login_required
 def index(request):
  template = loader.get_template ('budgettracker/index.html')
@@ -168,13 +173,20 @@ def index(request):
             #get the start and end date to pull all budget items from the model
              start_month = form.cleaned_data['start_month']
              print (start_month)
+             end_month = get_last_of_month(start_month)
              context = get_monthly_budget (start_month, request)
+             top_five = get_topfivespend(start_month, end_month, request)
+             context.update({'top_five' : top_five})
             # return HttpResponse((template.render(context,request)))
              return render(request, 'budgettracker/index.html',context)
     else:
         print ('inside else of post------------')
         today = datetime.today()
+        start_month = get_first_of_month (today)
+        end_month = get_last_of_month (today)
+        top_five = get_topfivespend(start_month, end_month, request)       
         context = get_monthly_budget (today, request)
+        context.update({'top_five' : top_five})
     return render(request, 'budgettracker/index.html',context)
  else:
      context={}

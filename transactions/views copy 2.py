@@ -55,19 +55,30 @@ class TransactionCreate (LoginRequiredMixin, CreateView):
      def form_valid(self, form):
         now = datetime.today()
         now_string = now.strftime('%Y-%m-%d %H:%M:%S')
+        print ('now.date')
+        print (now)
         store = form.cleaned_data ['store']
         category = form.cleaned_data ['category']
         acct_name = form.cleaned_data['account_name']
+        print('account name: '+ str(acct_name))
         amount = form.cleaned_data['amount']
         trans_date = form.cleaned_data['trans_date']
         trans_date_no_time_string = str(trans_date.year)+'-' + str(trans_date.month) + '-'+ str(trans_date.day)
         trans_date_no_time = trans_date.date()
+        print ('date string')
+        print (trans_date_no_time)
+        print ('----trans date')
+        print (trans_date)
         form.instance.user = self.request.user   
         user_id = self.request.user.id
         self.object = form.save()
+        print ('transaciton date...is it date-time?')
+        print (trans_date)
      #   bud_date = str(trans_date.year) +"-" +str(trans_date.month) + "-"+ "1"
         bud_date = get_first_of_month(trans_date)
         #create a category budget for a transaction if it does not exist
+        print ('category before if or statement:')
+        print (category)
  #       if (str(category) != 'Income' and str(category) !='Initial Balance'):
  #           print ('--------inside not!!!!!!!!!--------')
  #           if not BudgetTracker.objects.filter(date=bud_date, user=self.request.user, category__category=category).exists():
@@ -80,9 +91,6 @@ class TransactionCreate (LoginRequiredMixin, CreateView):
         # get the latest account balance based on the transaction date.  This should account for a present record and going into the past.
 
         #latest_account = AccountBalance.objects.filter(account__account_name=acct_name).values('account__account_name', 'balance', 'balance_date').latest('balance_date')
-       # get all accounts that are gte transaction
-       
-       
         latest_account = AccountBalance.objects.filter(account__account_name = acct_name, balance_date__lte=trans_date_no_time_string, account__user=self.request.user).values('account__account_name', 'balance', 'balance_date').order_by("-balance_date")[0]
         print (latest_account)
         print('--------latest acount----')
@@ -93,8 +101,6 @@ class TransactionCreate (LoginRequiredMixin, CreateView):
         if latest_account_date.date() == trans_date_no_time:
             #just update the existing balance if a balance exists for date the transaction is suppsoed to 
             new_balance = latest_account['balance'] + amount
-            print ('latest account balance:')
-            print (latest_account['balance'])
             print ('new balance:')
             print (new_balance)
             update_account = AccountBalance.objects.filter(account__account_name = acct_name, balance_date=trans_date_no_time, account__user=self.request.user).update(balance = new_balance)
@@ -108,35 +114,18 @@ class TransactionCreate (LoginRequiredMixin, CreateView):
                 record.balance = record.balance + amount
                 record.save() 
             # create a new record for account history
-            print ('----new balance before account history add')
-            print (new_balance)
-            print (trans_date)
-            print (latest_account['balance'])
-            new_account_history_record = AccountHistory(user=self.request.user, account = acct_name, transaction=self.object, date=trans_date, balance = new_balance)
+            new_account_history_record = AccountHistory(user=self.request.user, account = acct_name, transaction=self.object, date=now_string, balance = new_balance)
             new_account_history_record.save()
-            new_acct_records_to_update = AccountHistory.objects.filter(account=acct_name, user=self.request.user, date__gt=trans_date, date__lte = now)
-            print ('-----new acct records to update------')
-            print (new_acct_records_to_update)
-            for record in new_acct_records_to_update:
-                print (record.balance)
-                record.balance = record.balance + amount
-                record.save()
-
         else:
-            print ('-------IN ELSE?????')
         #create a new balance record if one doesn't exist for that date
             balance_description = str(store) +" "+ str(category)
-            new_account_balance=amount + float(latest_account['balance'])   
-            print('new account balance-----')
-            print (new_account_balance)     
+            new_account_balance=amount + float(latest_account['balance'])        
             new_record = AccountBalance(account=acct_name, balance_description = balance_description, balance=new_account_balance, balance_date=trans_date.date())
             new_record.save()
             new_account_history_record = AccountHistory(user=self.request.user, account = acct_name, transaction=self.object, date=trans_date, balance = new_account_balance)
             new_account_history_record.save() 
-            new_acct_records_to_update = AccountHistory.objects.filter(account=acct_name, user=self.request.user, date__gt=trans_date, date__lte = now)
+            new_acct_records_to_update = AccountHistory.objects.filter (account=acct_name, user=self.request.user, date__gt=trans_date, date__lte = now)
             records_to_update = AccountBalance.objects.filter(account__account_name=acct_name, account__user=self.request.user,balance_date__gt=trans_date, balance_date__lte = now.date())
-            print ('----new account history reords to update ------')
-            print (new_acct_records_to_update)
             print (records_to_update)
         #update any potential future records
             for record in records_to_update:
