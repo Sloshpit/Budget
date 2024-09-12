@@ -3,15 +3,16 @@
 {% load crispy_forms_tags %}
 
 {% block content %}
-<div class="container">
-      <div class="row justify-content-center">
-        <div class="col-8">
-          <h1 class="mt-2">Add a Category or Update One</h1>
-  <form method="post">
-    {% csrf_token %}
-    {{ form|crispy }}
-    <div class="mt-2"></div>
-    <button type="submit" class="btn btn-primary">Submit</button>
-  </form>
+  <h1 class="text-center  font-weight-lighter p-0 mt-2">Add a Category</h1>
+          <div class="col-sm-12">
+            <div class=" row justify-content-center mb-3">
+            <form method="post" class="text-left border p-3 bg-white font-weight-lighter">
+              {% csrf_token %}
+              {{ form|crispy }}
+              <div class="mt-2"></div>
+              <button type="submit" class="btn btn-primary">Submit</button>
+            </form>
+          </div>
+          </div>
  
 {% endblock %}

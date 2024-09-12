@@ -1,0 +1,219 @@
+{% extends 'base.html' %}
+
+{% load crispy_forms_tags %}
+
+{% block content %}
+<div class="container-fluid">
+      <div class="row justify-content-center">
+        <div class="col-md-10">
+          <h1 class="mt-2 text-center">Budget Spend Tracking for  {{ budget_month_human }}</h1>
+          <div class="mt-2"></div>
+          <div class="mt-2"></div>
+          <div class="row">
+          <div class="col-md-4">
+         <div class="card">
+            <div class="card-body">
+            <h5 class="card-title">Money not budgeted:</h5>
+            <p class="card-text">$ {{total_budget_left| floatformat:2}}</p>
+        </div>
+      </div>
+      </div>
+          <div class="col-md-4">
+         <div class="card">
+            <div class="card-body">
+            <h5 class="card-title">Total budgeted:</h5>
+            <p class="card-text">$ {{budget_total| floatformat:2}}</p>
+        </div>
+      </div>
+      </div>
+        <div class="col-md-4">
+           <div class="card" >
+            <div class="card-body">
+            <h5 class="card-title">Spend this month</h5>
+            	{% if total_monthly_budget_percentage <= 20 %}
+               <p class="card-text text-primary"><strong>{{total_monthly_budget_percentage| floatformat:2}}%</strong></p>
+               {% elif total_monthly_budget_percentage > 20 and total_monthly_budget_percentage < 80 %}
+              <p class="card-text text-success"><strong>{{total_monthly_budget_percentage| floatformat:2}}%</strong></p>
+            {% else %}
+                <p class="card-text danger"><strong>{{total_monthly_budget_percentage| floatformat:2}}%</strong></p>
+            {% endif %}
+              <p class="small text-center"><strong><i>*Excludes savings and investment money budgeted</i></strong></p>
+
+          </div>
+      </div>
+
+      </div>
+          <div class="col-md-2">
+           <div class="card" >
+            <div class="card-body">
+            <h5 class="card-title">You can still spend:</h5>
+            <p class="card-text">
+            {% if total_monthly_budget_percentage <= 50 %}
+            <div class="text-success">
+            <strong>${{total_monthly_budget_left| floatformat:2}}</strong>
+            </div>
+            {% elif total_monthly_budget_percentage > 50 and total_monthly_budget_percentage <= 80 %}
+            <div class="text-warning">
+            <strong>${{ total_monthly_budget_left| floatformat:2 }}</strong>
+            </div>
+            {% else %}
+            <div class="text-danger">
+            <strong>${{total_monthly_budget_left| floatformat:2}}</p></strong>
+            </div>
+            </p>
+            {% endif %}
+           <p class="small text-center"><strong><i>*Your savings will still be there if you spend all your money here!</i></strong></p>
+
+          </div>
+      </div>
+
+      </div>
+            <div class="col-md-2">
+           <div class="card" >
+            <div class="card-body">
+            <h5 class="card-title">Savings:</h5>
+            <p class="card-text">
+            <div class="text-success">
+            <strong>${{current_savings| floatformat:2}}</strong>
+            </div>
+          </div>
+      </div>
+
+      </div>
+     </div>
+
+  <div class="mt-2"></div>
+  <div class="d-flex flex-row-reverse">
+
+
+<form method="post">
+    {% csrf_token %}
+    {{ form|crispy }}
+    <div class="mt-2"></div>
+    <button type="submit" class="btn btn-primary">Show plan</button>
+  </form>
+  </div>
+ <div class="mt-2"></div>
+ {% if budget_list %}
+<table class="table  table-bordered">
+<thead>
+<tr>
+<th scope="col"><div class="text-center">Category</div></th>
+<th scope="col"><div class="text-center">Monthly Budget Plan</div></th>
+<th scope="col"><div class="text-center">Spend this Month</div></th>
+<th scope="col"><div class="text-center">Last Month Spend</div></th>
+<th scope="col"><div class="text-center">Remaining Spend</div> </th>
+<th scope="col"><div class="text-center">Manage</div></th>
+</thead>
+<tbody>  
+  {% for budget in budget_list %}
+      <tr>
+        <td>{{ budget.0 }}
+        {% load static %}
+        {% if budget.4 == True %}
+        <img src="{% static "budgettracker/carry_over.jpg" %}" alt="My image">    
+        {% endif %}
+        </td>
+              <td>${{ budget.1 | floatformat:2 }}</td>
+        <td>{% if budget.2 >= 0 %} ${{ budget.2|floatformat:2 }}
+            {% elif budget.2 <  0 %} <div class="text-danger">${{ budget.2|floatformat:2|cut:"-" }}</div>
+            {% endif %}
+        </td>
+            <td> <div class="text-center">
+           ${{budget.6| floatformat:2}}
+          </td>  
+            <td> <div class="text-center">
+           ${{budget.3| floatformat:2}}
+             <small>
+          	{% if budget.5 <= 20 %}
+          <div class="text-danger"><strong>{{ budget.5 | floatformat:2 }}% </strong></div>
+          {% elif budget.total_5 > 20 and budget.5 <= 80  %}
+            <div class="text-success"><strong>{{ budget.5 | floatformat:2 }}% </strong></div>
+          {% else %}
+            <div class="text-primary"><strong>{{ budget.5 | floatformat:2 }}% </strong></div>
+
+     	{% endif %}
+          	remaining</small>
+          </td>  
+               <td> <a class = "btn btn-warning" href="{%url "budgettracker-update" budget.7%}">Update</a> <a class = "btn btn-danger" href="{%url "budgettracker-delete" budget.7%}">Delete</a></td>
+          
+      </tr>
+{% endfor %}
+{% else %}
+<div class="text-danger"> There is no budget defined for this month </div>
+{% endif %}
+</tbody>
+</table>
+
+
+
+
+
+
+<p><strong>Total budget this month: </strong>${{ budget_total|floatformat:2 }}</p>
+<p><strong>Total spend this month:</strong> ${% if total_spend < 0 %}{{ total_spend|floatformat:2 }} 
+{% else %} 0.00 
+{% endif %}
+</p>
+<p><strong>Total money left to budget: $</strong>{{total_budget_left| floatformat:2}}</p>
+<p><div class="alert alert-primary"> If the spend amount is positive at the end of the month use the money to pay down something, save or enjoy something!</div></p>
+<p> <div class="alert alert-danger"> If the spend amount is negative, you have a problem and better spend somewhere else, or save less to pay your bills!</div></p>
+
+{{budget_month_date|json_script:"thedate" }}
+<script>
+$( document ).ready(function() {
+var thedate = JSON.parse(document.getElementById("thedate").innerHTML);
+//thedate = thedate.slice(0,-2)
+endofmonth = thedate.slice (-4)
+console.log(endofmonth)
+if (endofmonth.indexOf('-'),0==0)
+  {
+    thedate = thedate.slice(0,5)+'0'+thedate.slice(-3)
+    console.log(thedate)
+    console.log ('in if');
+  }
+
+endofday = thedate.slice (-2)
+console.log(endofday)
+if (endofday.indexOf('-'),0==0)
+{
+  thedate= thedate.slice(0,8)+'0'+ thedate.slice(-1);
+  console.log(thedate)
+}
+//console.log(firstcharacter)
+//console.log (endofdate)
+
+//console.log(thedate)
+  //$('#id_start_month').data("DateTimePicker").minDate(data.thedate);
+  $('#id_start_month').val(thedate);
+ // console.log (thedate);
+  //var dt = new Date(thedate +"EDT");
+ // console.log (dt);
+       $.ajax({
+         url: 'ajax/check_max_date',
+         success: function (data){
+         console.log('data date');
+         console.log(data);
+         dt = new Date(data);
+   //    $('#id_trans_date').data("DateTimePicker").maxDate(dt);
+  //  $('#id_trans_date').datetimepicker({
+  //    format: 'YYYY-MM-DD',
+  //    maxDate: dt,
+  //    minDate: '2020-06-01'
+   // });
+ $('#id_trans_date').datetimepicker({
+  format:'YYYY-MM-DD',
+  maxDate: data
+});
+         }
+       });    
+});
+  
+    
+</script>
+
+{% endblock %}
+   </div>
+</div>
+</div>
+
